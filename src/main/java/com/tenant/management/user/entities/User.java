@@ -1,16 +1,24 @@
 package com.tenant.management.user.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
+@Table(name = "app_user")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Builder.Default
+    private UUID userId = UUID.randomUUID();;
 
     private String firstName;
     private String lastName;
@@ -19,8 +27,7 @@ public class User {
     private String phoneNumber;
     private String address;
 
-    @OneToMany(mappedBy = "user")
-    private List<Subscription> subscriptions;
+
 
 }
 
