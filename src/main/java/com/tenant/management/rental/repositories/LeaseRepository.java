@@ -1,8 +1,8 @@
 package com.tenant.management.rental.repositories;
 
 import com.tenant.management.rental.entities.LeaseApplication;
+import com.tenant.management.rental.entities.PropertyVisit;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -16,14 +16,13 @@ public interface LeaseRepository extends JpaRepository<LeaseApplication, UUID> {
     @Query(value = "SELECT * FROM lease_applications la where la.landlord_id=?1", nativeQuery = true)
     Optional<List<LeaseApplication>> findAllByLandlordId(UUID lanlordId);
 
+    @Query(value = "SELECT * FROM lease_applications la where la.tenant_id=?1", nativeQuery = true)
+    Optional<List<LeaseApplication>> findAllByTenantId(UUID tenantId);
+
     @Query(value = "SELECT * FROM lease_applications la where la.property_id=?1", nativeQuery = true)
     Optional<List<LeaseApplication>> findAllByPropertyId(UUID propertyId);
 
-
-    @Query(value = "SELECT * FROM lease_application la where la.application_id =?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM lease_applications la where la.application_id =?1", nativeQuery = true)
     Optional<LeaseApplication> findByUuid(UUID applicationId);
 
-    @Modifying
-    @Query(value = "DELETE FROM lease_application la where la.application_id =?1", nativeQuery = true)
-    void deleteByUuid(UUID itemId);
 }

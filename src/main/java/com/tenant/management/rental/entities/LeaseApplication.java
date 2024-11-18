@@ -23,17 +23,20 @@ public class LeaseApplication {
 
     @Id
     @Builder.Default
-    private UUID applicationId = UUID.randomUUID();;
+    private UUID applicationId = UUID.randomUUID();
 
     private AppConstants.ApplicationStatus status;
 
     @ManyToOne
+    @JoinColumn(name = "landlord_id")
     private Landlord landlord;
 
     @ManyToOne
+    @JoinColumn(name = "tenant_id")
     private Tenant tenant;
 
     @OneToOne
+    @JoinColumn(name = "property_id")
     private Property property;
 
     private Date submittedDate;
@@ -41,7 +44,4 @@ public class LeaseApplication {
     private double proposedRent;
 
     private double applicantScore;
-
-
-
 }

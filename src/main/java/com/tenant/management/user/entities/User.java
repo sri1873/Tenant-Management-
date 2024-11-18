@@ -18,7 +18,8 @@ import java.util.UUID;
 public class User {
     @Id
     @Builder.Default
-    private UUID userId = UUID.randomUUID();;
+    private UUID userId = UUID.randomUUID();
+    ;
 
     private String firstName;
     private String lastName;
@@ -26,7 +27,6 @@ public class User {
     private String password;
     private String phoneNumber;
     private String address;
-
 
 
 }

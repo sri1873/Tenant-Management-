@@ -8,5 +8,5 @@ import java.util.UUID;
 @Entity
 public class Property {
     @Id
-    private UUID propertyId=UUID.randomUUID();
+    private UUID propertyId = UUID.randomUUID();
 }

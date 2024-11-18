@@ -8,4 +8,11 @@ public class AppConstants {
         REJECTED,
         WITHDRAWN
     }
+
+    public enum PropertyVisitStatus {
+        PENDING,
+        APPROVED,
+        REJECTED,
+        CANCELLED
+    }
 }

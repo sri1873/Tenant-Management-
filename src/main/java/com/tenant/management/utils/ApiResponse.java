@@ -14,7 +14,7 @@ import java.util.List;
 
 @Data
 @Builder
-@JsonPropertyOrder({ "success", "message" })
+@JsonPropertyOrder({"success", "message"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResponse implements Serializable {

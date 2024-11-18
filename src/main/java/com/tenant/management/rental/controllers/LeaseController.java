@@ -1,6 +1,5 @@
 package com.tenant.management.rental.controllers;
 
-import com.tenant.management.rental.entities.LeaseApplication;
 import com.tenant.management.rental.requestDtos.LeaseAppActionRequest;
 import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
 import com.tenant.management.rental.services.LeaseService;
@@ -8,7 +7,6 @@ import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -20,10 +18,11 @@ public class LeaseController {
     private LeaseService leaseService;
 
     @PostMapping("/submitLeaseApplication")
-    public ResponseEntity<ApiResponse> submitLeaseAppication(@RequestBody SubmitApplicationRequest leaseApplication){
+    public ResponseEntity<ApiResponse> submitLeaseAppication(@RequestBody SubmitApplicationRequest leaseApplication) {
         ApiResponse applications = leaseService.submitLeaseApplications(leaseApplication);
         return new ResponseEntity<>(applications, HttpStatus.OK);
     }
+
     @GetMapping("/getLeaseApplication/{applicationId}")
     public ResponseEntity<ApiResponse> getLeaseApplication(@PathVariable UUID applicationId) {
         ApiResponse applications = leaseService.getLeaseApplication(applicationId);
@@ -35,6 +34,13 @@ public class LeaseController {
         ApiResponse applications = leaseService.getLeaseApplicationsByLandlord(landlordId);
         return new ResponseEntity<>(applications, HttpStatus.OK);
     }
+
+    @GetMapping("/getLeaseApplicationsByTenant/{tenantId}")
+    public ResponseEntity<ApiResponse> getTenantLeaseApplications(@PathVariable UUID tenantId) {
+        ApiResponse applications = leaseService.getLeaseApplicationsByTenant(tenantId);
+        return new ResponseEntity<>(applications, HttpStatus.OK);
+    }
+
     @GetMapping("/getLeaseApplicationsByProperty/{propertyId}")
     public ResponseEntity<ApiResponse> getPropertyLeaseApplications(@PathVariable UUID propertyId) {
         ApiResponse applications = leaseService.getLeaseApplicationByProperty(propertyId);
@@ -42,21 +48,22 @@ public class LeaseController {
     }
 
     @PostMapping("/withdrawLeaseApplication/{applicationId}")
-    public ResponseEntity<ApiResponse> withdrawLeaseAppication(@PathVariable UUID applicationId){
+    public ResponseEntity<ApiResponse> withdrawLeaseAppication(@PathVariable UUID applicationId) {
         ApiResponse applications = leaseService.withdrawLeaseApplications(applicationId);
         return new ResponseEntity<>(applications, HttpStatus.OK);
     }
+
     @PostMapping("/approveLeaseApplication")
-    public ResponseEntity<ApiResponse> approveLeaseAppication(@RequestBody LeaseAppActionRequest requestDto){
+    public ResponseEntity<ApiResponse> approveLeaseAppication(@RequestBody LeaseAppActionRequest requestDto) {
         ApiResponse applications = leaseService.approveLeaseApplications(requestDto);
         return new ResponseEntity<>(applications, HttpStatus.OK);
     }
+
     @PostMapping("/rejectLeaseApplication")
-    public ResponseEntity<ApiResponse> rejectLeaseAppication(@PathVariable LeaseAppActionRequest requestDto){
+    public ResponseEntity<ApiResponse> rejectLeaseAppication(@PathVariable LeaseAppActionRequest requestDto) {
         ApiResponse applications = leaseService.rejectLeaseApplications(requestDto);
         return new ResponseEntity<>(applications, HttpStatus.OK);
     }
-
 
 
 }

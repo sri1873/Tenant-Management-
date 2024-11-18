@@ -23,39 +23,51 @@ public class LeaseService {
 
     public ApiResponse getLeaseApplication(UUID applicationId) {
         Optional<LeaseApplication> byUuid = leaseRepository.findByUuid(applicationId);
-        if(byUuid.isPresent()){
+        if (byUuid.isPresent()) {
             return ApiResponse.builder().data(byUuid.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
-        }else{
+        } else {
             return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Application Not Found")
                     .success(Boolean.FALSE).build();
         }
     }
 
-    public ApiResponse getLeaseApplicationsByLandlord(UUID landlordId){
+    public ApiResponse getLeaseApplicationsByLandlord(UUID landlordId) {
 
         Optional<List<LeaseApplication>> allByLandlordId = leaseRepository.findAllByLandlordId(landlordId);
-        if(allByLandlordId.isPresent()){
+        if (allByLandlordId.isPresent()) {
             return ApiResponse.builder().data(allByLandlordId.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
-        }else{
+        } else {
+            return ApiResponse.builder().data(new ArrayList<>()).status(HttpStatus.OK).message("")
+                    .success(Boolean.TRUE).build();
+        }
+    }
+    public ApiResponse getLeaseApplicationsByTenant(UUID tenantId) {
+
+        Optional<List<LeaseApplication>> allByTenantId = leaseRepository.findAllByTenantId(tenantId);
+        if (allByTenantId.isPresent()) {
+            return ApiResponse.builder().data(allByTenantId.get()).status(HttpStatus.OK).message("")
+                    .success(Boolean.TRUE).build();
+        } else {
             return ApiResponse.builder().data(new ArrayList<>()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         }
     }
 
-    public ApiResponse getLeaseApplicationByProperty(UUID propertyId){
+    public ApiResponse getLeaseApplicationByProperty(UUID propertyId) {
 
-        Optional<List<LeaseApplication>> allByLandlordId = leaseRepository.findAllByPropertyId(propertyId);
-        if(allByLandlordId.isPresent()){
-            return ApiResponse.builder().data(allByLandlordId.get()).status(HttpStatus.OK).message("")
+        Optional<List<LeaseApplication>> allByPropertyId = leaseRepository.findAllByPropertyId(propertyId);
+        if (allByPropertyId.isPresent()) {
+            return ApiResponse.builder().data(allByPropertyId.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
-        }else{
+        } else {
             return ApiResponse.builder().status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         }
     }
-    public ApiResponse submitLeaseApplications(SubmitApplicationRequest leaseApplication){
+
+    public ApiResponse submitLeaseApplications(SubmitApplicationRequest leaseApplication) {
 
 
 //        leaseRepository.save(leaseApplication);
@@ -63,65 +75,64 @@ public class LeaseService {
                 .success(Boolean.TRUE).build();
 
     }
-    public ApiResponse withdrawLeaseApplications(UUID applicationId){
+
+    public ApiResponse withdrawLeaseApplications(UUID applicationId) {
         ApiResponse apiResponse = new ApiResponse();
         Optional<LeaseApplication> byUuid = leaseRepository.findByUuid(applicationId);
-        if(byUuid.isPresent()){
+        if (byUuid.isPresent()) {
             LeaseApplication leaseApplication = byUuid.get();
             AppConstants.ApplicationStatus status = leaseApplication.getStatus();
-            if (status.equals(AppConstants.ApplicationStatus.APPROVED)||status.equals(AppConstants.ApplicationStatus.PENDING)){
-             leaseApplication.setStatus(AppConstants.ApplicationStatus.WITHDRAWN);
-             leaseRepository.save(leaseApplication);
-             apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Application Withdrawn")
-                     .success(Boolean.TRUE).build();
-            }else{
+            if (status.equals(AppConstants.ApplicationStatus.APPROVED) || status.equals(AppConstants.ApplicationStatus.PENDING)) {
+                leaseApplication.setStatus(AppConstants.ApplicationStatus.WITHDRAWN);
+                leaseRepository.save(leaseApplication);
+                apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Application Withdrawn")
+                        .success(Boolean.TRUE).build();
+            } else {
                 ApiResponse.builder().status(HttpStatus.FORBIDDEN).message("Application already Rejected")
                         .success(Boolean.FALSE).build();
             }
-        }else {
+        } else {
             apiResponse = ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Application not found")
                     .success(Boolean.FALSE).build();
         }
         return apiResponse;
     }
-    public ApiResponse approveLeaseApplications(LeaseAppActionRequest requestDto){
+
+    public ApiResponse approveLeaseApplications(LeaseAppActionRequest requestDto) {
         ApiResponse apiResponse = new ApiResponse();
         Optional<LeaseApplication> byUuid = leaseRepository.findByUuid(requestDto.getApplicationId());
-        if (byUuid.isPresent()){
+        if (byUuid.isPresent()) {
             LeaseApplication leaseApplication = byUuid.get();
-            if (leaseApplication.getLandlord().getUserId() == requestDto.getLandlordId()){
+            if (leaseApplication.getLandlord().getUserId() == requestDto.getLandlordId()) {
                 leaseApplication.setStatus(AppConstants.ApplicationStatus.APPROVED);
                 leaseRepository.save(leaseApplication);
-                apiResponse=ApiResponse.builder().status(HttpStatus.OK).message("Application Approved").success(Boolean.TRUE).build();
+                apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Application Approved").success(Boolean.TRUE).build();
+            } else {
+                apiResponse = ApiResponse.builder().status(HttpStatus.UNAUTHORIZED).message("Property does not belong to landlord").success(Boolean.FALSE).build();
             }
-            else{
-                apiResponse=ApiResponse.builder().status(HttpStatus.UNAUTHORIZED).message("Property does not belong to landlord").success(Boolean.FALSE).build();
-            }
-        }
-        else {
-            apiResponse=ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Application not found").success(Boolean.FALSE).build();
+        } else {
+            apiResponse = ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Application not found").success(Boolean.FALSE).build();
         }
 
         return apiResponse;
 
     }
-    public ApiResponse rejectLeaseApplications(LeaseAppActionRequest requestDto){
+
+    public ApiResponse rejectLeaseApplications(LeaseAppActionRequest requestDto) {
 
         ApiResponse apiResponse = new ApiResponse();
         Optional<LeaseApplication> byUuid = leaseRepository.findByUuid(requestDto.getApplicationId());
-        if (byUuid.isPresent()){
+        if (byUuid.isPresent()) {
             LeaseApplication leaseApplication = byUuid.get();
-            if (leaseApplication.getLandlord().getUserId() == requestDto.getLandlordId()){
+            if (leaseApplication.getLandlord().getUserId() == requestDto.getLandlordId()) {
                 leaseApplication.setStatus(AppConstants.ApplicationStatus.REJECTED);
                 leaseRepository.save(leaseApplication);
-                apiResponse=ApiResponse.builder().status(HttpStatus.OK).message("Application Rejected").success(Boolean.TRUE).build();
+                apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Application Rejected").success(Boolean.TRUE).build();
+            } else {
+                apiResponse = ApiResponse.builder().status(HttpStatus.UNAUTHORIZED).message("Property does not belong to landlord").success(Boolean.FALSE).build();
             }
-            else{
-                apiResponse=ApiResponse.builder().status(HttpStatus.UNAUTHORIZED).message("Property does not belong to landlord").success(Boolean.FALSE).build();
-            }
-        }
-        else {
-            apiResponse=ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Application not found").success(Boolean.FALSE).build();
+        } else {
+            apiResponse = ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Application not found").success(Boolean.FALSE).build();
         }
 
         return apiResponse;
