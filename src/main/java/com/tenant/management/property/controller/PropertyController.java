@@ -1,0 +1,67 @@
+package com.tenant.management.property.controller;
+
+import com.tenant.management.property.requestDtos.AddPropertyRequest;
+import com.tenant.management.property.requestDtos.UpdatePropertyRequest;
+import com.tenant.management.property.requestDtos.PropertyResponse;
+import com.tenant.management.property.repositories.PropertyService;
+import com.tenant.management.utils.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/properties")
+public class PropertyController {
+
+    @Autowired
+    private PropertyService propertyService;
+
+    // Add Property
+    @PostMapping("/addPropertyDetails")
+    public ResponseEntity<ApiResponse> addProperty(@RequestBody AddPropertyRequest addPropertyRequest) {
+        ApiResponse response = propertyService.addProperty(addPropertyRequest);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // Update Property
+    @PutMapping("/updatePropertyDetails/{propertyId}")
+    public ResponseEntity<ApiResponse> updateProperty(
+            @PathVariable UUID propertyId,
+            @RequestBody UpdatePropertyRequest updateRequest) {
+        ApiResponse response = propertyService.updateProperty(propertyId, updateRequest);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Get Property by ID
+    @GetMapping("getPropertyDetails/{propertyId}")
+    public ResponseEntity<PropertyResponse> getProperty(@PathVariable UUID propertyId) {
+        PropertyResponse property = propertyService.getPropertyById(propertyId);
+        return new ResponseEntity<>(property, HttpStatus.OK);
+    }
+
+    // Delete Property
+    @DeleteMapping("/deleteProperty/{propertyId}")
+    public ResponseEntity<ApiResponse> deleteProperty(@PathVariable UUID propertyId) {
+        ApiResponse response = propertyService.deleteProperty(propertyId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Search Properties
+    @GetMapping("/search")
+    public ResponseEntity<List<PropertyResponse>> searchProperties(
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) Integer bedrooms,
+            @RequestParam(required = false) Integer bathrooms,
+            @RequestParam(required = false) Boolean available) {
+
+        List<PropertyResponse> properties = propertyService.searchProperties(location, minPrice, maxPrice, type, bedrooms, bathrooms, available);
+        return new ResponseEntity<>(properties, HttpStatus.OK);
+    }
+}
