@@ -19,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-        @Table(name = "property_visit_request")
+@Table(name = "property_visit_request")
 public class PropertyVisit {
 
     @Id

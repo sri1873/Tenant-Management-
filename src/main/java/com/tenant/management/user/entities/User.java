@@ -19,7 +19,6 @@ public class User {
     @Id
     @Builder.Default
     private UUID userId = UUID.randomUUID();
-    ;
 
     private String firstName;
     private String lastName;
