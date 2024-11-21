@@ -2,7 +2,6 @@ package com.tenant.management.rental.services;
 
 import com.tenant.management.rental.entities.PropertyVisit;
 import com.tenant.management.rental.repositories.PropertyVisitRepository;
-import com.tenant.management.rental.requestDtos.LeaseAppActionRequest;
 import com.tenant.management.rental.requestDtos.PropertyVisitActionRequest;
 import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
 import com.tenant.management.utils.ApiResponse;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,10 +38,11 @@ public class PropertyVisitService {
             return ApiResponse.builder().data(allByLandlordId.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         } else {
-            return ApiResponse.builder().data(new ArrayList<>()).status(HttpStatus.OK).message("")
-                    .success(Boolean.TRUE).build();
+            return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Request Not Found")
+                    .success(Boolean.FALSE).build();
         }
     }
+
     public ApiResponse getPropertyVisitsByTenant(UUID tenantId) {
 
         Optional<List<PropertyVisit>> allByTenantId = propertyVisitRepository.findAllByTenantId(tenantId);
@@ -51,8 +50,8 @@ public class PropertyVisitService {
             return ApiResponse.builder().data(allByTenantId.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         } else {
-            return ApiResponse.builder().data(new ArrayList<>()).status(HttpStatus.OK).message("")
-                    .success(Boolean.TRUE).build();
+            return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Request Not Found")
+                    .success(Boolean.FALSE).build();
         }
     }
 
@@ -63,8 +62,8 @@ public class PropertyVisitService {
             return ApiResponse.builder().data(allByPropertyId.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         } else {
-            return ApiResponse.builder().status(HttpStatus.OK).message("")
-                    .success(Boolean.TRUE).build();
+            return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Request Not Found")
+                    .success(Boolean.FALSE).build();
         }
     }
 
@@ -89,7 +88,7 @@ public class PropertyVisitService {
                 apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Request Canceleld")
                         .success(Boolean.TRUE).build();
             } else {
-                ApiResponse.builder().status(HttpStatus.FORBIDDEN).message("Request already Rejected")
+                apiResponse = ApiResponse.builder().status(HttpStatus.FORBIDDEN).message("Request already Rejected")
                         .success(Boolean.FALSE).build();
             }
         } else {

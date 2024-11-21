@@ -14,10 +14,10 @@ public interface PropertyVisitRepository extends JpaRepository<PropertyVisit, UU
 
     @Query(value = "SELECT * FROM property_visit_request pvr where pvr.landlord_id=?1", nativeQuery = true)
     Optional<List<PropertyVisit>> findAllByLandlordId(UUID pvrnlordId);
-    
+
     @Query(value = "SELECT * FROM property_visit_request pvr where pvr.tenant_id=?1", nativeQuery = true)
     Optional<List<PropertyVisit>> findAllByTenantId(UUID tenantId);
-    
+
     @Query(value = "SELECT * FROM property_visit_request pvr where pvr.property_id=?1", nativeQuery = true)
     Optional<List<PropertyVisit>> findAllByPropertyId(UUID propertyId);
 

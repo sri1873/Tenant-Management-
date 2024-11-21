@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,10 +38,11 @@ public class LeaseService {
             return ApiResponse.builder().data(allByLandlordId.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         } else {
-            return ApiResponse.builder().data(new ArrayList<>()).status(HttpStatus.OK).message("")
-                    .success(Boolean.TRUE).build();
+            return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Applications for landlord not found")
+                    .success(Boolean.FALSE).build();
         }
     }
+
     public ApiResponse getLeaseApplicationsByTenant(UUID tenantId) {
 
         Optional<List<LeaseApplication>> allByTenantId = leaseRepository.findAllByTenantId(tenantId);
@@ -50,8 +50,8 @@ public class LeaseService {
             return ApiResponse.builder().data(allByTenantId.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         } else {
-            return ApiResponse.builder().data(new ArrayList<>()).status(HttpStatus.OK).message("")
-                    .success(Boolean.TRUE).build();
+            return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Tenant Application not found")
+                    .success(Boolean.FALSE).build();
         }
     }
 
@@ -62,8 +62,8 @@ public class LeaseService {
             return ApiResponse.builder().data(allByPropertyId.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         } else {
-            return ApiResponse.builder().status(HttpStatus.OK).message("")
-                    .success(Boolean.TRUE).build();
+            return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Application for property not found")
+                    .success(Boolean.FALSE).build();
         }
     }
 
@@ -88,7 +88,7 @@ public class LeaseService {
                 apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Application Withdrawn")
                         .success(Boolean.TRUE).build();
             } else {
-                ApiResponse.builder().status(HttpStatus.FORBIDDEN).message("Application already Rejected")
+                apiResponse = ApiResponse.builder().status(HttpStatus.FORBIDDEN).message("Application already Rejected")
                         .success(Boolean.FALSE).build();
             }
         } else {

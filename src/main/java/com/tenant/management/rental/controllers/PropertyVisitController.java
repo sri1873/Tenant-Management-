@@ -1,6 +1,5 @@
 package com.tenant.management.rental.controllers;
 
-import com.tenant.management.rental.requestDtos.LeaseAppActionRequest;
 import com.tenant.management.rental.requestDtos.PropertyVisitActionRequest;
 import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
 import com.tenant.management.rental.services.PropertyVisitService;

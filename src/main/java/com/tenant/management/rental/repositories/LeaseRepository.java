@@ -1,7 +1,6 @@
 package com.tenant.management.rental.repositories;
 
 import com.tenant.management.rental.entities.LeaseApplication;
-import com.tenant.management.rental.entities.PropertyVisit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
