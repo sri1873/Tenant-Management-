@@ -2,7 +2,6 @@ package com.tenant.management.rental.services;
 
 import com.tenant.management.rental.entities.PropertyVisit;
 import com.tenant.management.rental.repositories.PropertyVisitRepository;
-import com.tenant.management.rental.requestDtos.PropertyVisitActionRequest;
 import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
 import com.tenant.management.utils.ApiResponse;
 import com.tenant.management.utils.AppConstants;
@@ -10,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -70,68 +70,26 @@ public class PropertyVisitService {
     public ApiResponse submitPropertyVisits(SubmitApplicationRequest leaseApplication) {
 
 
-//        propertyVisitRepository.save(leaseApplication);
+        propertyVisitRepository.save(PropertyVisit.builder().visitDate(LocalDate.of(2025, 11, 23)).status(AppConstants.PropertyVisitStatus.PENDING).build());
         return ApiResponse.builder().status(HttpStatus.CREATED).message("Submitted Successfully")
                 .success(Boolean.TRUE).build();
 
     }
 
-    public ApiResponse cancelPropertyVisits(UUID applicationId) {
+    public ApiResponse updatePropertyVisitStatus(PropertyVisit propertyVisit) {
         ApiResponse apiResponse = new ApiResponse();
-        Optional<PropertyVisit> byUuid = propertyVisitRepository.findByUuid(applicationId);
-        if (byUuid.isPresent()) {
-            PropertyVisit propertyVisit = byUuid.get();
-            AppConstants.PropertyVisitStatus status = propertyVisit.getStatus();
-            if (status.equals(AppConstants.PropertyVisitStatus.APPROVED) || status.equals(AppConstants.PropertyVisitStatus.PENDING)) {
-                propertyVisit.setStatus(AppConstants.PropertyVisitStatus.CANCELLED);
-                propertyVisitRepository.save(propertyVisit);
-                apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Request Canceleld")
-                        .success(Boolean.TRUE).build();
-            } else {
-                apiResponse = ApiResponse.builder().status(HttpStatus.FORBIDDEN).message("Request already Rejected")
-                        .success(Boolean.FALSE).build();
-            }
+        LocalDate visitDate = propertyVisit.getVisitDate();
+        LocalDate today = LocalDate.now();
+
+        if (today.isBefore(visitDate)) {
+            propertyVisitRepository.save(propertyVisit);
+            apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Status Changed")
+                    .success(Boolean.TRUE).build();
         } else {
-            apiResponse = ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Request not found")
+            apiResponse = ApiResponse.builder().status(HttpStatus.FORBIDDEN).message("Cannot change status")
                     .success(Boolean.FALSE).build();
         }
         return apiResponse;
     }
 
-    public ApiResponse approvePropertyVisits(PropertyVisitActionRequest requestDto) {
-        ApiResponse apiResponse = new ApiResponse();
-        Optional<PropertyVisit> byUuid = propertyVisitRepository.findByUuid(requestDto.getPropertyVisitId());
-        if (byUuid.isPresent()) {
-            PropertyVisit propertyVisit = byUuid.get();
-            if (propertyVisit.getLandlord().getUserId() == requestDto.getLandlordId()) {
-                propertyVisit.setStatus(AppConstants.PropertyVisitStatus.APPROVED);
-                propertyVisitRepository.save(propertyVisit);
-                apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Request Approved").success(Boolean.TRUE).build();
-            } else {
-                apiResponse = ApiResponse.builder().status(HttpStatus.UNAUTHORIZED).message("Property does not belong to landlord").success(Boolean.FALSE).build();
-            }
-        } else {
-            apiResponse = ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Request not found").success(Boolean.FALSE).build();
-        }
-        return apiResponse;
-    }
-
-    public ApiResponse rejectPropertyVisits(PropertyVisitActionRequest requestDto) {
-
-        ApiResponse apiResponse = new ApiResponse();
-        Optional<PropertyVisit> byUuid = propertyVisitRepository.findByUuid(requestDto.getPropertyVisitId());
-        if (byUuid.isPresent()) {
-            PropertyVisit propertyVisit = byUuid.get();
-            if (propertyVisit.getLandlord().getUserId() == requestDto.getLandlordId()) {
-                propertyVisit.setStatus(AppConstants.PropertyVisitStatus.REJECTED);
-                propertyVisitRepository.save(propertyVisit);
-                apiResponse = ApiResponse.builder().status(HttpStatus.OK).message("Request Rejected").success(Boolean.TRUE).build();
-            } else {
-                apiResponse = ApiResponse.builder().status(HttpStatus.UNAUTHORIZED).message("Property does not belong to landlord").success(Boolean.FALSE).build();
-            }
-        } else {
-            apiResponse = ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Request not found").success(Boolean.FALSE).build();
-        }
-        return apiResponse;
-    }
 }

@@ -1,6 +1,13 @@
 package com.tenant.management.rental.controllers;
 
+import com.tenant.management.rental.entities.Command;
+import com.tenant.management.rental.entities.LeaseApplication;
+import com.tenant.management.rental.entities.PropertyVisit;
+import com.tenant.management.rental.implementation.CommandInvoker;
+import com.tenant.management.rental.implementation.SchedulePropertyVisitCommand;
+import com.tenant.management.rental.implementation.SubmitLeaseApplicationCommand;
 import com.tenant.management.rental.requestDtos.LeaseAppActionRequest;
+import com.tenant.management.rental.requestDtos.PropertyVisitActionRequest;
 import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
 import com.tenant.management.rental.services.LeaseService;
 import com.tenant.management.utils.ApiResponse;
@@ -16,6 +23,8 @@ public class LeaseController {
 
     @Autowired
     private LeaseService leaseService;
+
+    private final CommandInvoker commandInvoker = new CommandInvoker();
 
     @PostMapping("/submitLeaseApplication")
     public ResponseEntity<ApiResponse> submitLeaseAppication(@RequestBody SubmitApplicationRequest leaseApplication) {
@@ -47,22 +56,17 @@ public class LeaseController {
         return new ResponseEntity<>(applications, HttpStatus.OK);
     }
 
-    @PostMapping("/withdrawLeaseApplication/{applicationId}")
-    public ResponseEntity<ApiResponse> withdrawLeaseAppication(@PathVariable UUID applicationId) {
-        ApiResponse applications = leaseService.withdrawLeaseApplications(applicationId);
-        return new ResponseEntity<>(applications, HttpStatus.OK);
+    @PutMapping("/updateLeaseApplicationStatus")
+    public ResponseEntity<ApiResponse> updateLeaseApplicationStatus(@RequestBody LeaseAppActionRequest actionRequest) {
+        Object data = leaseService.getLeaseApplication(actionRequest.getApplicationId()).getData();
+
+        Command command = new SubmitLeaseApplicationCommand((LeaseApplication) data, actionRequest.getNewStatus(), leaseService);
+        return new ResponseEntity<>(commandInvoker.executeCommand(command), HttpStatus.OK);
     }
 
-    @PostMapping("/approveLeaseApplication")
-    public ResponseEntity<ApiResponse> approveLeaseAppication(@RequestBody LeaseAppActionRequest requestDto) {
-        ApiResponse applications = leaseService.approveLeaseApplications(requestDto);
-        return new ResponseEntity<>(applications, HttpStatus.OK);
-    }
-
-    @PostMapping("/rejectLeaseApplication")
-    public ResponseEntity<ApiResponse> rejectLeaseAppication(@PathVariable LeaseAppActionRequest requestDto) {
-        ApiResponse applications = leaseService.rejectLeaseApplications(requestDto);
-        return new ResponseEntity<>(applications, HttpStatus.OK);
+    @PutMapping("/undoLeaseApplicationStatus")
+    public ResponseEntity<ApiResponse> undoLeaseApplicationStatus() {
+        return new ResponseEntity<>(commandInvoker.undoLastCommand(), HttpStatus.OK);
     }
 
 

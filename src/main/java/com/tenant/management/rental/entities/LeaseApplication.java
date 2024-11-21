@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class LeaseApplication {
     @JoinColumn(name = "property_id")
     private Property property;
 
-    private Date submittedDate;
+    private LocalDate submittedDate;
 
     private double proposedRent;
 

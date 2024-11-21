@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -38,7 +38,7 @@ public class PropertyVisit {
     @JoinColumn(name = "property_id")
     private Property property;
 
-    private Date visitDate;
+    private LocalDate visitDate;
 
     private AppConstants.PropertyVisitStatus status;
 }

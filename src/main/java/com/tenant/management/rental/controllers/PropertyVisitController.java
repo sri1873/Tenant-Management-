@@ -1,5 +1,9 @@
 package com.tenant.management.rental.controllers;
 
+import com.tenant.management.rental.entities.Command;
+import com.tenant.management.rental.entities.PropertyVisit;
+import com.tenant.management.rental.implementation.CommandInvoker;
+import com.tenant.management.rental.implementation.SchedulePropertyVisitCommand;
 import com.tenant.management.rental.requestDtos.PropertyVisitActionRequest;
 import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
 import com.tenant.management.rental.services.PropertyVisitService;
@@ -16,6 +20,8 @@ public class PropertyVisitController {
 
     @Autowired
     private PropertyVisitService propertyVisitService;
+
+    private final CommandInvoker commandInvoker = new CommandInvoker();
 
     @PostMapping("/submitPropertyVisit")
     public ResponseEntity<ApiResponse> submitPropertyVisit(@RequestBody SubmitApplicationRequest propertyVisit) {
@@ -47,23 +53,16 @@ public class PropertyVisitController {
         return new ResponseEntity<>(propertyVisits, HttpStatus.OK);
     }
 
-    @PostMapping("/cancelPropertyVisit/{propertyVisitId}")
-    public ResponseEntity<ApiResponse> cancelPropertyVisit(@PathVariable UUID propertyVisitId) {
-        ApiResponse propertyVisits = propertyVisitService.cancelPropertyVisits(propertyVisitId);
-        return new ResponseEntity<>(propertyVisits, HttpStatus.OK);
+    @PutMapping("/updatePropertyVisitStatus")
+    public ResponseEntity<ApiResponse> updatePropertyVisitStatus(@RequestBody PropertyVisitActionRequest actionRequest) {
+        Object data = propertyVisitService.getPropertyVisit(actionRequest.getPropertyVisitId()).getData();
+
+        Command command = new SchedulePropertyVisitCommand((PropertyVisit) data, actionRequest.getNewStatus(), propertyVisitService);
+        return new ResponseEntity<>(commandInvoker.executeCommand(command), HttpStatus.OK);
     }
 
-    @PostMapping("/approvePropertyVisit")
-    public ResponseEntity<ApiResponse> approvePropertyVisit(@RequestBody PropertyVisitActionRequest requestDto) {
-        ApiResponse propertyVisits = propertyVisitService.approvePropertyVisits(requestDto);
-        return new ResponseEntity<>(propertyVisits, HttpStatus.OK);
+    @PutMapping("/undoPropertyVisitStatus")
+    public ResponseEntity<ApiResponse> undoPropertyVisitStatus() {
+        return new ResponseEntity<>(commandInvoker.undoLastCommand(), HttpStatus.OK);
     }
-
-    @PostMapping("/rejectPropertyVisit")
-    public ResponseEntity<ApiResponse> rejectPropertyVisit(@PathVariable PropertyVisitActionRequest requestDto) {
-        ApiResponse propertyVisits = propertyVisitService.rejectPropertyVisits(requestDto);
-        return new ResponseEntity<>(propertyVisits, HttpStatus.OK);
-    }
-
-
 }
