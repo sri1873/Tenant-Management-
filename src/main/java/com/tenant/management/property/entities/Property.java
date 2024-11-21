@@ -13,7 +13,7 @@ import java.util.UUID;
 public class Property {
     @Id
     @GeneratedValue
-    private UUID id;
+    private UUID id = UUID.randomUUID();
     private String address;
     private Double price;
     @Column(nullable = false)
