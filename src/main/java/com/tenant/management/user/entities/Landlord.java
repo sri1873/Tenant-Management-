@@ -9,5 +9,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Landlord extends User {
     public String property;
-
+    private String advertisement;
 }
