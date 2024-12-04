@@ -1,5 +1,6 @@
 package com.tenant.management.property.entities;
 
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+@Entity
 public class Apartment extends Property {
     public Apartment(String address, double price, int bedrooms, int bathrooms, boolean available, UUID landlordId) {
         this.setType("Apartment");

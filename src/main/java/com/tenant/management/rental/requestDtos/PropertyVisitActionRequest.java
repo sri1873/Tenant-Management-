@@ -1,5 +1,6 @@
 package com.tenant.management.rental.requestDtos;
 
+import com.tenant.management.utils.AppConstants;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,6 +11,6 @@ import java.util.UUID;
 public class PropertyVisitActionRequest {
 
     private UUID propertyVisitId;
-    private UUID landlordId;
+    private AppConstants.PropertyVisitStatus newStatus;
 
 }
