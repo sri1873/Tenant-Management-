@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,7 +17,28 @@ public class TenantService {
     @Autowired
     private TenantRepository tenantRepository;
 
-//    TENANT APIS
+    private final List<TenantObserver> observers;
+
+    public TenantService() {
+        this.observers = new ArrayList<>();
+    }
+
+    public void registerObserver(TenantObserver observer) {
+        observers.add(observer);
+    }
+
+    public void unregisterObserver(TenantObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers(Tenant tenant) {
+        for (TenantObserver observer : observers) {
+            observer.onTenantChange(tenant);
+        }
+    }
+
+
+    //    TENANT APIS
     public ApiResponse getTenantById(UUID userId){
         Optional<Tenant> byUuid = tenantRepository.findByUuid(userId);
         if (byUuid.isPresent()) {
@@ -29,6 +52,7 @@ public class TenantService {
 
     public ApiResponse createTenant(Tenant tenant){
         tenantRepository.save(tenant);
+        notifyObservers(tenant);
         return ApiResponse.builder().status(HttpStatus.CREATED).message("Tenant Created")
                 .success(Boolean.TRUE).build();
     }
@@ -45,6 +69,7 @@ public class TenantService {
             tenant.setAddress(AddUserDetails.getAddress());
             tenant.setOccupation(AddUserDetails.getOccupation());
             tenantRepository.save(tenant);
+            notifyObservers(tenant);
             return ApiResponse.builder().status(HttpStatus.OK).message("Tenant Details Updated")
                     .success(Boolean.TRUE).build();
         }
@@ -57,6 +82,7 @@ public class TenantService {
         return ApiResponse.builder().status(HttpStatus.OK).message("Tenant Deleted")
                 .success(Boolean.TRUE).build();
     }
+
 
 }
 
