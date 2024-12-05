@@ -93,4 +93,11 @@ public class PropertyServiceImpl implements PropertyService {
         response.setLandlordId(property.getLandlordId());
         return response;
     }
+
+    @Override
+    public List<PropertyResponse> getAllProperties() {
+        return propertyRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
 }
