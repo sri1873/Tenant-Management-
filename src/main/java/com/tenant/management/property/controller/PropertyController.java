@@ -18,17 +18,20 @@ import java.util.UUID;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PropertyController {
 
-    @Autowired
-    private PropertyService propertyService;
+    private final PropertyService propertyService;
 
-    //Get All Properties
+    // Constructor injection for PropertyService
+    @Autowired
+    public PropertyController(PropertyService propertyService) {
+        this.propertyService = propertyService;
+    }
+
     // Get All Properties
     @GetMapping("/allProperties")
     public ResponseEntity<List<PropertyResponse>> getAllProperties() {
         List<PropertyResponse> properties = propertyService.getAllProperties();
         return new ResponseEntity<>(properties, HttpStatus.OK);
     }
-
 
     // Add Property
     @PostMapping("/addPropertyDetails")
