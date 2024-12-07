@@ -67,18 +67,18 @@ public class LandlordService {
                 .success(Boolean.TRUE).build();
     }
 
-    public ApiResponse updateLandlord(UUID userId, Landlord AddUserDetails) {
+    public ApiResponse updateLandlord(UUID userId, AddUserDetails addUserDetails) {
         Optional<Landlord> byUuid = landlordRepository.findByUuid(userId);
 
         if (byUuid.isPresent()) {
             Landlord landlord = byUuid.get();
-            landlord.setFirstName(AddUserDetails.getFirstName());
-            landlord.setLastName(AddUserDetails.getLastName());
-            landlord.setEmail(AddUserDetails.getEmail());
-            landlord.setPassword(AddUserDetails.getPassword());
-            landlord.setPhoneNumber(AddUserDetails.getPhoneNumber());
-            landlord.setAddress(AddUserDetails.getAddress());
-            landlord.setOccupation(AddUserDetails.getOccupation());
+            landlord.setFirstName(addUserDetails.getFirstName());
+            landlord.setLastName(addUserDetails.getLastName());
+            landlord.setEmail(addUserDetails.getEmail());
+            landlord.setPassword(addUserDetails.getPassword());
+            landlord.setPhoneNumber(addUserDetails.getPhoneNumber());
+            landlord.setAddress(addUserDetails.getAddress());
+            landlord.setOccupation(addUserDetails.getOccupation());
             landlordRepository.save(landlord);
             notify(landlord); //to notify the updates made to Landlord
             return ApiResponse.builder().status(HttpStatus.OK).message("Landlord Details Updated")
@@ -88,9 +88,9 @@ public class LandlordService {
                 .success(Boolean.FALSE).build();
     }
 
-    public void deleteLandlord(UUID userId) {
+    public ApiResponse deleteLandlord(UUID userId) {
         landlordRepository.deleteById(userId);
-        ApiResponse.builder().status(HttpStatus.OK).message("Landlord Deleted")
+        return ApiResponse.builder().status(HttpStatus.OK).message("Landlord Deleted")
                 .success(Boolean.TRUE).build();
     }
 }

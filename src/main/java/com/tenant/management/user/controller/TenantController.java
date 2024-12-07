@@ -1,6 +1,6 @@
 package com.tenant.management.user.controller;
 
-import com.tenant.management.user.entities.Tenant;
+
 import com.tenant.management.user.requestdtos.AddUserDetails;
 import com.tenant.management.user.services.TenantServices.TenantService;
 import com.tenant.management.utils.ApiResponse;
@@ -33,8 +33,8 @@ public class TenantController {
     }
 
     @PutMapping("/tenant/{userId}")
-    public ResponseEntity<ApiResponse> updateTenant(@RequestBody UUID userId, Tenant AddUserDetails) {
-        ApiResponse updatedTenant = tenantService.updateTenant(userId, AddUserDetails);
+    public ResponseEntity<ApiResponse> updateTenant(@RequestBody UUID userId, AddUserDetails addUserDetails) {
+        ApiResponse updatedTenant = tenantService.updateTenant(userId, addUserDetails);
         return new ResponseEntity<>(updatedTenant, HttpStatus.OK);
     }
 

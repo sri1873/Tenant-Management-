@@ -23,6 +23,7 @@ public class AdminService {
     private final List<AdminObserver> observers;
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
     private IssueRepository issueRepository;
 
     public AdminService() {
@@ -82,7 +83,9 @@ public class AdminService {
                 .issueStatus(AppConstants.IssueStatus.OPEN)
                 .issueDescription(issueDetails.getIssueDescription()).build();
         issueRepository.save(issue);
-        notify(optionalAdmin.get());
+        if (optionalAdmin.isPresent()) {
+            notify(optionalAdmin.get());
+        }
         return ApiResponse.builder().status(HttpStatus.OK).message("Issue Raised")
                 .success(Boolean.TRUE).build();
     }

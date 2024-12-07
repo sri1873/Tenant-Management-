@@ -65,17 +65,17 @@ public class TenantService {
                 .success(Boolean.TRUE).build();
     }
 
-    public ApiResponse updateTenant(UUID userId, Tenant AddUserDetails) {
+    public ApiResponse updateTenant(UUID userId, AddUserDetails addUserDetails) {
         Optional<Tenant> byUuid = tenantRepository.findByUuid(userId);
         if (byUuid.isPresent()) {
             Tenant tenant = byUuid.get();
-            tenant.setFirstName(AddUserDetails.getFirstName());
-            tenant.setLastName(AddUserDetails.getLastName());
-            tenant.setEmail(AddUserDetails.getEmail());
-            tenant.setPassword(AddUserDetails.getPassword());
-            tenant.setPhoneNumber(AddUserDetails.getPhoneNumber());
-            tenant.setAddress(AddUserDetails.getAddress());
-            tenant.setOccupation(AddUserDetails.getOccupation());
+            tenant.setFirstName(addUserDetails.getFirstName());
+            tenant.setLastName(addUserDetails.getLastName());
+            tenant.setEmail(addUserDetails.getEmail());
+            tenant.setPassword(addUserDetails.getPassword());
+            tenant.setPhoneNumber(addUserDetails.getPhoneNumber());
+            tenant.setAddress(addUserDetails.getAddress());
+            tenant.setOccupation(addUserDetails.getOccupation());
             tenantRepository.save(tenant);
             notify(tenant); //to notify the updates made to tenant
             return ApiResponse.builder().status(HttpStatus.OK).message("Tenant Details Updated")

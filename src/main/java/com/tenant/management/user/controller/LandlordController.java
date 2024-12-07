@@ -1,6 +1,5 @@
 package com.tenant.management.user.controller;
 
-import com.tenant.management.user.entities.Landlord;
 import com.tenant.management.user.requestdtos.AddUserDetails;
 import com.tenant.management.user.services.AdminServices.AdminService;
 import com.tenant.management.user.services.LandlordServices.LandlordService;
@@ -35,15 +34,15 @@ public class LandlordController {
     }
 
     @PutMapping("/landlord/{userId}")
-    public ResponseEntity<ApiResponse> updateLandlord(@RequestBody UUID userId, Landlord AddUserDetails) {
-        ApiResponse updatedLandlord = landlordService.updateLandlord(userId, AddUserDetails);
+    public ResponseEntity<ApiResponse> updateLandlord(@RequestBody UUID userId, AddUserDetails addUserDetails) {
+        ApiResponse updatedLandlord = landlordService.updateLandlord(userId, addUserDetails);
         return new ResponseEntity<>(updatedLandlord, HttpStatus.OK);
     }
 
     @DeleteMapping("/landlord/{id}")
-    public ResponseEntity<HttpStatus> deleteLandlord(@RequestBody UUID userId) {
-        landlordService.deleteLandlord(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ApiResponse> deleteLandlord(@RequestBody UUID userId) {
+        ApiResponse response = landlordService.deleteLandlord(userId);
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }
 
 }

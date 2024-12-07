@@ -19,7 +19,9 @@ import java.util.Optional;
 public class RtbService {
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
     private PropertyRepository propertyRepository;
+    @Autowired
     private RtbRepository rtbRepository;
 
     public ApiResponse updateRtbStatus(RtbRequestDto requestDto) {
