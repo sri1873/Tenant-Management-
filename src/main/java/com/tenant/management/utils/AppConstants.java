@@ -15,4 +15,10 @@ public class AppConstants {
         REJECTED,
         CANCELLED
     }
+
+    public enum IssueStatus{
+        OPEN,
+        RESOLVED,
+        CLOSED
+    }
 }

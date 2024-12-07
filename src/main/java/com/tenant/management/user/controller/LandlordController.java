@@ -1,7 +1,9 @@
 package com.tenant.management.user.controller;
 
 import com.tenant.management.user.entities.Landlord;
+import com.tenant.management.user.requestdtos.AddIssueDetails;
 import com.tenant.management.user.requestdtos.AddUserDetails;
+import com.tenant.management.user.services.AdminService;
 import com.tenant.management.user.services.LandlordService;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.util.UUID;
 @RestController
 public class LandlordController {
     private final LandlordService landlordService;
+    private AdminService adminService;
 
     @Autowired
     public LandlordController(LandlordService landlordService) {
@@ -42,5 +45,11 @@ public class LandlordController {
     public ResponseEntity<HttpStatus> deleteLandlord(@RequestBody UUID userId) {
         landlordService.deleteLandlord(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    //to raise issues
+    @PostMapping("/landlord/issue")
+    public ResponseEntity<ApiResponse> raiseIssue(@RequestBody AddIssueDetails addIssueDetails) {
+        ApiResponse issueRaised = adminService.raiseIssue(addIssueDetails);
+        return new ResponseEntity<>(issueRaised, HttpStatus.CREATED);
     }
 }

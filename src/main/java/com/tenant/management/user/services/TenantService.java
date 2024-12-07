@@ -18,21 +18,22 @@ public class TenantService {
     @Autowired
     private TenantRepository tenantRepository;
 
+//    Observer Pattern implementation
     private final List<TenantObserver> observers;
 
     public TenantService() {
         this.observers = new ArrayList<>();
     }
 
-    public void registerObserver(TenantObserver observer) {
+    public void attach(TenantObserver observer) {
         observers.add(observer);
     }
 
-    public void unregisterObserver(TenantObserver observer) {
+    public void detach(TenantObserver observer) {
         observers.remove(observer);
     }
 
-    private void notifyObservers(Tenant tenant) {
+    private void notify(Tenant tenant) {
         for (TenantObserver observer : observers) {
             observer.onTenantChange(tenant);
         }
@@ -60,7 +61,7 @@ public class TenantService {
                 .firstName(userDetails.getFirstName())
                 .lastName(userDetails.getLastName()).build();
         tenantRepository.save(tenant);
-        notifyObservers(tenant);
+        notify(tenant); //to notify the creation of tenant
         return ApiResponse.builder().status(HttpStatus.CREATED).message("Tenant Created")
                 .success(Boolean.TRUE).build();
     }
@@ -77,7 +78,7 @@ public class TenantService {
             tenant.setAddress(AddUserDetails.getAddress());
             tenant.setOccupation(AddUserDetails.getOccupation());
             tenantRepository.save(tenant);
-            notifyObservers(tenant);
+            notify(tenant); //to notify the updates made to tenant
             return ApiResponse.builder().status(HttpStatus.OK).message("Tenant Details Updated")
                     .success(Boolean.TRUE).build();
         }
@@ -90,8 +91,6 @@ public class TenantService {
         return ApiResponse.builder().status(HttpStatus.OK).message("Tenant Deleted")
                 .success(Boolean.TRUE).build();
     }
-
-
 }
 
 
