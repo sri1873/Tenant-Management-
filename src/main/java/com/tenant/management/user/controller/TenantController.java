@@ -49,7 +49,7 @@ public class TenantController {
 
     @PostMapping("/tenant/issue")
     public ResponseEntity<ApiResponse> raiseIssue(@RequestBody AddIssueDetails addIssueDetails) {
-        ApiResponse issueRaised = adminService.raiseIssue(addIssueDetails);
+        ApiResponse issueRaised = adminService.raiseIssue(addIssueDetails, admin);
         return new ResponseEntity<>(issueRaised, HttpStatus.CREATED);
     }
 }

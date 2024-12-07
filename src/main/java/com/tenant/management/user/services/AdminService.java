@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +22,26 @@ public class AdminService {
     private AdminRepository adminRepository;
     private IssueRepository issueRepository;
 
+    //    Observer Pattern implementation
+    private final List<AdminObserver> observers;
+
+    public AdminService() {
+        this.observers = new ArrayList<>();
+    }
+
+    public void attach(AdminObserver observer) {
+        observers.add(observer);
+    }
+
+    public void detach(AdminObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notify(Admin admin) {
+        for (AdminObserver observer : observers) {
+            observer.onAdminChange(admin);
+        }
+    }
     public ApiResponse getAdminById(UUID adminId) {
         Optional<Admin> byUuid = adminRepository.findByUuid(adminId);
         if (byUuid.isPresent()) {
@@ -36,7 +58,8 @@ public class AdminService {
                 .adminUsername(adminDetails.getAdminUsername())
                 .adminPassword(adminDetails.getAdminPassword()).build();
         adminRepository.save(admin);
-        return ApiResponse.builder().status(HttpStatus.CREATED).message("Landlord Created")
+        notify(admin);
+        return ApiResponse.builder().status(HttpStatus.CREATED).message("Admin Created")
                 .success(Boolean.TRUE).build();
     }
 
@@ -51,22 +74,24 @@ public class AdminService {
         }
     }
 
-    public ApiResponse raiseIssue(AddIssueDetails issueDetails) {
+    public ApiResponse raiseIssue(AddIssueDetails issueDetails, Admin admin) {
         Issue issue = Issue.builder().issueId(UUID.randomUUID())
                 .userType(issueDetails.getUserType())
                 .issueStatus(issueDetails.getIssueStatus())
                 .issueDescription(issueDetails.getIssueDescription()).build();
         issueRepository.save(issue);
+        notify(admin);
         return ApiResponse.builder().status(HttpStatus.OK).message("Issue Raised")
                 .success(Boolean.TRUE).build();
     }
 
-    public ApiResponse updateIssueStatus(UUID issueId, Issue AddIssueDetails) {
+    public ApiResponse updateIssueStatus(UUID issueId, Issue AddIssueDetails, Admin admin) {
         Optional<Issue> byUuid = issueRepository.findByUuid(issueId);
         if (byUuid.isPresent()) {
             Issue issue = byUuid.get();
             issue.setIssueStatus(AddIssueDetails.getIssueStatus());
             issueRepository.save(issue);
+            notify(admin);
             return ApiResponse.builder().status(HttpStatus.OK).message("Issue Status Updated")
                     .success(Boolean.TRUE).build();
         }
