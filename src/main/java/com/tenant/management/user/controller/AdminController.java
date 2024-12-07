@@ -1,6 +1,7 @@
 package com.tenant.management.user.controller;
 
 import com.tenant.management.user.entities.Issue;
+import com.tenant.management.user.requestdtos.AddIssueDetails;
 import com.tenant.management.user.requestdtos.AddUserDetails;
 import com.tenant.management.user.services.AdminService;
 import com.tenant.management.utils.ApiResponse;
@@ -39,8 +40,13 @@ public class AdminController {
     }
 
     @PutMapping("/issue/{issueId}")
-    public ResponseEntity<ApiResponse> updateIssueStatus(@RequestBody UUID issueId, Issue AddIssueDetails) {
-        ApiResponse updatedStatus = adminService.updateIssueStatus(issueId, AddIssueDetails, admin);
+    public ResponseEntity<ApiResponse> updateIssueStatus(@RequestBody AddIssueDetails issueDetails) {
+        ApiResponse updatedStatus = adminService.updateIssueStatus(issueDetails);
         return new ResponseEntity<>(updatedStatus, HttpStatus.OK);
+    }
+    @PostMapping("/issue/raiseIssue")
+    public ResponseEntity<ApiResponse> raiseIssue(@RequestBody AddIssueDetails addIssueDetails) {
+        ApiResponse issueRaised = adminService.raiseIssue(addIssueDetails);
+        return new ResponseEntity<>(issueRaised, HttpStatus.CREATED);
     }
 }

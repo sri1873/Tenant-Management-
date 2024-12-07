@@ -74,24 +74,26 @@ public class AdminService {
         }
     }
 
-    public ApiResponse raiseIssue(AddIssueDetails issueDetails, Admin admin) {
+    public ApiResponse raiseIssue(AddIssueDetails issueDetails) {
+        Optional<Admin> optionalAdmin = adminRepository.findByUuid(issueDetails.getAdminId());
         Issue issue = Issue.builder().issueId(UUID.randomUUID())
                 .userType(issueDetails.getUserType())
                 .issueStatus(issueDetails.getIssueStatus())
                 .issueDescription(issueDetails.getIssueDescription()).build();
         issueRepository.save(issue);
-        notify(admin);
+        notify(optionalAdmin.get());
         return ApiResponse.builder().status(HttpStatus.OK).message("Issue Raised")
                 .success(Boolean.TRUE).build();
     }
 
-    public ApiResponse updateIssueStatus(UUID issueId, Issue AddIssueDetails, Admin admin) {
-        Optional<Issue> byUuid = issueRepository.findByUuid(issueId);
+    public ApiResponse updateIssueStatus(AddIssueDetails issueDetails) {
+        Optional<Issue> byUuid = issueRepository.findByUuid(issueDetails.getIssueId());
+        Optional<Admin> optionalAdmin = adminRepository.findByUuid(issueDetails.getAdminId());
         if (byUuid.isPresent()) {
             Issue issue = byUuid.get();
-            issue.setIssueStatus(AddIssueDetails.getIssueStatus());
+            issue.setIssueStatus(issueDetails.getIssueStatus());
             issueRepository.save(issue);
-            notify(admin);
+            notify(optionalAdmin.get());
             return ApiResponse.builder().status(HttpStatus.OK).message("Issue Status Updated")
                     .success(Boolean.TRUE).build();
         }

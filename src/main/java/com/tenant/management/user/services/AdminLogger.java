@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AdminLogger {
+public class AdminLogger implements AdminObserver {
     private static final Logger logger = LoggerFactory.getLogger(AdminLogger.class);
 
     @Override

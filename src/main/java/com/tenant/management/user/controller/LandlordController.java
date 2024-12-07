@@ -46,10 +46,5 @@ public class LandlordController {
         landlordService.deleteLandlord(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    //to raise issues
-    @PostMapping("/landlord/issue")
-    public ResponseEntity<ApiResponse> raiseIssue(@RequestBody AddIssueDetails addIssueDetails) {
-        ApiResponse issueRaised = adminService.raiseIssue(addIssueDetails, admin);
-        return new ResponseEntity<>(issueRaised, HttpStatus.CREATED);
-    }
+
 }
