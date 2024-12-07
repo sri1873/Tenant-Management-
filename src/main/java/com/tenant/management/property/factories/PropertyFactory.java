@@ -1,13 +1,18 @@
 package com.tenant.management.property.factories;
 
 import com.tenant.management.property.entities.Apartment;
-import com.tenant.management.property.entities.House;
 import com.tenant.management.property.entities.Condo;
+import com.tenant.management.property.entities.House;
 import com.tenant.management.property.entities.Property;
 
 import java.util.UUID;
 
 public class PropertyFactory {
+
+    private PropertyFactory() {
+        throw new UnsupportedOperationException("This class has no instance");
+    }
+
     public static Property createProperty(String type, String address, double price,
                                           int bedrooms, int bathrooms, boolean available, UUID landlordId) {
         switch (type.toLowerCase()) {

@@ -4,27 +4,30 @@ import com.tenant.management.property.entities.Property;
 import com.tenant.management.property.factories.PropertyFactory;
 import com.tenant.management.property.repositories.PropertyRepository;
 import com.tenant.management.property.repositories.PropertyService;
-import com.tenant.management.property.requestDtos.AddPropertyRequest;
-import com.tenant.management.property.requestDtos.UpdatePropertyRequest;
-import com.tenant.management.property.requestDtos.PropertyResponse;
+import com.tenant.management.property.requestdtos.AddPropertyRequest;
+import com.tenant.management.property.requestdtos.PropertyResponse;
+import com.tenant.management.property.requestdtos.UpdatePropertyRequest;
 import com.tenant.management.utils.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class PropertyServiceImpl implements PropertyService {
 
-    @Autowired
-    private PropertyRepository propertyRepository;
+    private static final String PROPERTY_NOT_FOUND_MESSAGE = "Property not found";
+
+    private final PropertyRepository propertyRepository;
+
+    // Constructor
+    public PropertyServiceImpl(PropertyRepository propertyRepository) {
+        this.propertyRepository = propertyRepository;
+    }
 
     @Override
     public ApiResponse addProperty(AddPropertyRequest addPropertyRequest) {
-        // Used the factory method ("PropertyFactory")
         Property property = PropertyFactory.createProperty(
                 addPropertyRequest.getType(),
                 addPropertyRequest.getAddress(),
@@ -42,7 +45,7 @@ public class PropertyServiceImpl implements PropertyService {
     public ApiResponse updateProperty(UUID propertyId, UpdatePropertyRequest updateRequest) {
         Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
         if (optionalProperty.isEmpty()) {
-            return ApiResponse.builder().success(false).message("Property not found").build();
+            return ApiResponse.builder().success(false).message(PROPERTY_NOT_FOUND_MESSAGE).build();
         }
         Property property = optionalProperty.get();
 
@@ -60,7 +63,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public PropertyResponse getPropertyById(UUID propertyId) {
         Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new IllegalArgumentException("Property not found"));
+                .orElseThrow(() -> new IllegalArgumentException(PROPERTY_NOT_FOUND_MESSAGE));
         return mapToResponse(property);
     }
 
@@ -68,7 +71,7 @@ public class PropertyServiceImpl implements PropertyService {
     public ApiResponse deleteProperty(UUID propertyId) {
         Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
         if (optionalProperty.isEmpty()) {
-            return ApiResponse.builder().success(false).message("Property not found").build();
+            return ApiResponse.builder().success(false).message(PROPERTY_NOT_FOUND_MESSAGE).build();
         }
         propertyRepository.delete(optionalProperty.get());
         return ApiResponse.builder().success(true).message("Property deleted successfully").build();
@@ -77,7 +80,7 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public List<PropertyResponse> searchProperties(String location, Double minPrice, Double maxPrice, String type, Integer bedrooms, Integer bathrooms, Boolean available) {
         List<Property> properties = propertyRepository.searchProperties(location, minPrice, maxPrice, type, bedrooms, bathrooms, available);
-        return properties.stream().map(this::mapToResponse).collect(Collectors.toList());
+        return properties.stream().map(this::mapToResponse).toList(); // Replaced collect with toList
     }
 
     // Helper method to map Property entity to PropertyResponse DTO
@@ -92,5 +95,12 @@ public class PropertyServiceImpl implements PropertyService {
         response.setAvailable(property.getAvailable());
         response.setLandlordId(property.getLandlordId());
         return response;
+    }
+
+    @Override
+    public List<PropertyResponse> getAllProperties() {
+        return propertyRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 }

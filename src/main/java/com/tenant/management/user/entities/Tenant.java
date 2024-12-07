@@ -1,15 +1,19 @@
 package com.tenant.management.user.entities;
 
-import lombok.Data;
 import jakarta.persistence.Entity;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class Tenant extends User {
     private int rentalPoints;
     private boolean activeSubscription;
-    
+
 }
 

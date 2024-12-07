@@ -2,6 +2,7 @@ package com.tenant.management.user.services;
 
 import com.tenant.management.user.entities.Landlord;
 import com.tenant.management.user.repositories.LandlordRepository;
+import com.tenant.management.user.requestdtos.AddUserDetails;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class LandlordService {
 
     //    LANDLORD APIS
 
-    public ApiResponse getLandlordById(UUID userId){
+    public ApiResponse getLandlordById(UUID userId) {
         Optional<Landlord> byUuid = landlordRepository.findByUuid(userId);
         if (byUuid.isPresent()) {
             return ApiResponse.builder().data(byUuid.get()).status(HttpStatus.OK).message("")
@@ -51,7 +52,15 @@ public class LandlordService {
                     .success(Boolean.FALSE).build();
         }
     }
-    public ApiResponse createLandlord(Landlord landlord){
+
+    public ApiResponse createLandlord(AddUserDetails userDetails) {
+        Landlord landlord = Landlord.builder().email(userDetails.getEmail()).userId(UUID.randomUUID())
+                .address(userDetails.getAddress())
+                .phoneNumber(userDetails.getPhoneNumber())
+                .occupation(userDetails.getOccupation())
+                .password(userDetails.getPassword())
+                .firstName(userDetails.getFirstName())
+                .lastName(userDetails.getLastName()).build();
         landlordRepository.save(landlord);
         notifyObservers(landlord);
         return ApiResponse.builder().status(HttpStatus.CREATED).message("Landlord Created")
@@ -62,7 +71,7 @@ public class LandlordService {
         Optional<Landlord> byUuid = landlordRepository.findByUuid(userId);
 
         if (byUuid.isPresent()) {
-            Landlord landlord=byUuid.get();
+            Landlord landlord = byUuid.get();
             landlord.setFirstName(AddUserDetails.getFirstName());
             landlord.setLastName(AddUserDetails.getLastName());
             landlord.setEmail(AddUserDetails.getEmail());

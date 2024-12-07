@@ -2,9 +2,7 @@ package com.tenant.management.rental;
 
 import com.tenant.management.rental.entities.LeaseApplication;
 import com.tenant.management.rental.repositories.LeaseRepository;
-import com.tenant.management.rental.requestDtos.LeaseAppActionRequest;
 import com.tenant.management.rental.services.LeaseService;
-import com.tenant.management.user.entities.Landlord;
 import com.tenant.management.utils.ApiResponse;
 import com.tenant.management.utils.AppConstants;
 import org.junit.Assert;
@@ -21,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -111,6 +108,15 @@ class LeaseServiceTest {
         Assert.assertEquals(Boolean.FALSE, result.getSuccess());
     }
 
+    @Test
+    void updateLeaseApplicationStatusSuccessTest() {
+        LeaseApplication leaseApplication = LeaseApplication.builder().applicationId(UUID.randomUUID()).status(AppConstants.ApplicationStatus.APPROVED).build();
+        ApiResponse result = testService.updateLeaseApplicationStatus(leaseApplication);
+        Assert.assertEquals(result.getClass(), ApiResponse.class);
+        Assert.assertNull(result.getData());
+        Assert.assertEquals(HttpStatus.OK, result.getStatus());
+        Assert.assertEquals(Boolean.TRUE, result.getSuccess());
+    }
 
 
     @TestConfiguration

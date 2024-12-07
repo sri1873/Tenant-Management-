@@ -2,7 +2,7 @@ package com.tenant.management.rental.services;
 
 import com.tenant.management.rental.entities.LeaseApplication;
 import com.tenant.management.rental.repositories.LeaseRepository;
-import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
+import com.tenant.management.rental.requestdtos.SubmitApplicationRequest;
 import com.tenant.management.utils.ApiResponse;
 import com.tenant.management.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +74,7 @@ public class LeaseService {
                 .success(Boolean.TRUE).build();
 
     }
+
     public ApiResponse updateLeaseApplicationStatus(LeaseApplication leaseApplication) {
 
         leaseRepository.save(leaseApplication);

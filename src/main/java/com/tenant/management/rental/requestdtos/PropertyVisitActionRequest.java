@@ -1,4 +1,4 @@
-package com.tenant.management.rental.requestDtos;
+package com.tenant.management.rental.requestdtos;
 
 import com.tenant.management.utils.AppConstants;
 import lombok.Builder;
