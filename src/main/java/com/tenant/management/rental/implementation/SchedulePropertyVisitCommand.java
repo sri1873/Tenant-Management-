@@ -8,10 +8,10 @@ import com.tenant.management.utils.AppConstants;
 
 public class SchedulePropertyVisitCommand implements Command {
 
-    private PropertyVisit propertyVisit;
+    private final PropertyVisit propertyVisit;
+    private final AppConstants.PropertyVisitStatus newStatus;
+    private final PropertyVisitService propertyVisitService;
     private AppConstants.PropertyVisitStatus prevStatus;
-    private AppConstants.PropertyVisitStatus newStatus;
-    private PropertyVisitService propertyVisitService;
 
     public SchedulePropertyVisitCommand(PropertyVisit propertyVisit, AppConstants.PropertyVisitStatus newStatus, PropertyVisitService propertyVisitService) {
         this.propertyVisit = propertyVisit;

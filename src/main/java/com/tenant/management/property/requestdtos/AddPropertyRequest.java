@@ -1,12 +1,11 @@
-package com.tenant.management.property.requestDtos;
+package com.tenant.management.property.requestdtos;
 
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
-public class PropertyResponse {
-    private UUID propertyId;
+public class AddPropertyRequest {
     private String address;
     private Double price;
     private String type;

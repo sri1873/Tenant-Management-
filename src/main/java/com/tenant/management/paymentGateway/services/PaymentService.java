@@ -1,9 +1,9 @@
 package com.tenant.management.paymentGateway.services;
 
-import com.tenant.management.paymentGateway.requestDtos.PaymentRequest;
-import com.tenant.management.paymentGateway.requestDtos.PaymentResponse;
 import com.tenant.management.paymentGateway.entities.Payment;
 import com.tenant.management.paymentGateway.repositories.PaymentRepository;
+import com.tenant.management.paymentGateway.requestDtos.PaymentRequest;
+import com.tenant.management.paymentGateway.requestDtos.PaymentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,10 +14,9 @@ import java.util.UUID;
 @Service
 public class PaymentService {
 
+    private final String paymentGatewayUrl = "https://api.paymentgateway.com";
     @Autowired
     private PaymentRepository paymentRepository;
-
-    private final String paymentGatewayUrl = "https://api.paymentgateway.com";
 
     public PaymentResponse initiatePayment(PaymentRequest request) {
         // Create a new payment record

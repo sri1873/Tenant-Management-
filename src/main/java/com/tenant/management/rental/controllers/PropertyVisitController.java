@@ -4,8 +4,8 @@ import com.tenant.management.rental.entities.Command;
 import com.tenant.management.rental.entities.PropertyVisit;
 import com.tenant.management.rental.implementation.CommandInvoker;
 import com.tenant.management.rental.implementation.SchedulePropertyVisitCommand;
-import com.tenant.management.rental.requestDtos.PropertyVisitActionRequest;
-import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
+import com.tenant.management.rental.requestdtos.PropertyVisitActionRequest;
+import com.tenant.management.rental.requestdtos.SubmitApplicationRequest;
 import com.tenant.management.rental.services.PropertyVisitService;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,9 @@ import java.util.UUID;
 @RestController
 public class PropertyVisitController {
 
+    private final CommandInvoker commandInvoker = new CommandInvoker();
     @Autowired
     private PropertyVisitService propertyVisitService;
-
-    private final CommandInvoker commandInvoker = new CommandInvoker();
 
     @PostMapping("/submitPropertyVisit")
     public ResponseEntity<ApiResponse> submitPropertyVisit(@RequestBody SubmitApplicationRequest propertyVisit) {

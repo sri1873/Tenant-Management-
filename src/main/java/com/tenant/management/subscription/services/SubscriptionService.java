@@ -1,9 +1,9 @@
 package com.tenant.management.subscription.services;
 
-import com.tenant.management.subscription.requestDtos.SubscriptionRequest;
-import com.tenant.management.subscription.requestDtos.SubscriptionResponse;
 import com.tenant.management.subscription.entities.Subscription;
 import com.tenant.management.subscription.repositories.SubscriptionRepository;
+import com.tenant.management.subscription.requestDtos.SubscriptionRequest;
+import com.tenant.management.subscription.requestDtos.SubscriptionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -2,9 +2,7 @@ package com.tenant.management.rental;
 
 import com.tenant.management.rental.entities.PropertyVisit;
 import com.tenant.management.rental.repositories.PropertyVisitRepository;
-import com.tenant.management.rental.requestDtos.PropertyVisitActionRequest;
 import com.tenant.management.rental.services.PropertyVisitService;
-import com.tenant.management.user.entities.Landlord;
 import com.tenant.management.utils.ApiResponse;
 import com.tenant.management.utils.AppConstants;
 import org.junit.Assert;
@@ -17,11 +15,11 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -111,7 +109,25 @@ class PropertyVisitServiceTest {
         Assert.assertEquals(Boolean.FALSE, result.getSuccess());
     }
 
+    @Test
+    void updatePropertyVisitStatusSuccessTest() {
+        PropertyVisit propertyVisit = PropertyVisit.builder().propertyVisitId(UUID.randomUUID()).status(AppConstants.PropertyVisitStatus.APPROVED).visitDate(LocalDate.of(2025, 11, 23)).build();
+        ApiResponse result = testService.updatePropertyVisitStatus(propertyVisit);
+        Assert.assertEquals(result.getClass(), ApiResponse.class);
+        Assert.assertNull(result.getData());
+        Assert.assertEquals(HttpStatus.OK, result.getStatus());
+        Assert.assertEquals(Boolean.TRUE, result.getSuccess());
+    }
 
+    @Test
+    void updatePropertyVisitStatusFailureTest() {
+        PropertyVisit propertyVisit = PropertyVisit.builder().propertyVisitId(UUID.randomUUID()).status(AppConstants.PropertyVisitStatus.APPROVED).visitDate(LocalDate.now()).build();
+        ApiResponse result = testService.updatePropertyVisitStatus(propertyVisit);
+        Assert.assertEquals(result.getClass(), ApiResponse.class);
+        Assert.assertNull(result.getData());
+        Assert.assertEquals(HttpStatus.FORBIDDEN, result.getStatus());
+        Assert.assertEquals(Boolean.FALSE, result.getSuccess());
+    }
 
     @TestConfiguration
     static class PropertyVisitServiceImplTestContextConfiguration {

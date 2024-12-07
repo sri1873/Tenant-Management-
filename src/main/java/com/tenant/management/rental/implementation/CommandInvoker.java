@@ -3,10 +3,11 @@ package com.tenant.management.rental.implementation;
 import com.tenant.management.rental.entities.Command;
 import com.tenant.management.utils.ApiResponse;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class CommandInvoker {
-    private final Stack<Command> commandHistory = new Stack<>();
+    private final Deque<Command> commandHistory = new ArrayDeque<>();
 
     public ApiResponse executeCommand(Command command) {
         ApiResponse execute = command.execute();
