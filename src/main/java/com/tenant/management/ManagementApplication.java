@@ -31,7 +31,7 @@ public class ManagementApplication {
 
     @Autowired
     public void initializeObservers() {
-        tenantService.registerObserver(tenantLogger);
-        landlordService.registerObserver(landlordLogger);
+        tenantService.attach(tenantLogger);
+        landlordService.attach(landlordLogger);
     }
 }

@@ -29,6 +29,7 @@ class LeaseServiceTest {
     LeaseApplication assetUser = LeaseApplication.builder().applicationId(id).status(AppConstants.ApplicationStatus.APPROVED).build();
     @Mock
     private LeaseRepository testRepository;
+
     @InjectMocks
     private LeaseService testService;
 

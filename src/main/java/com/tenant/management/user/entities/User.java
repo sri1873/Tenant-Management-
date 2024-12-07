@@ -26,5 +26,6 @@ public class User {
     private String phoneNumber;
     private String address;
     private String occupation;
+    private boolean verified;
 }
 

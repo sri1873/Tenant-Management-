@@ -26,15 +26,15 @@ public class LandlordService {
         this.observers = new ArrayList<>(); // Initialize the observers list
     }
 
-    public void registerObserver(LandlordObserver observer) {
+    public void attach(LandlordObserver observer) {
         observers.add(observer);
     }
 
-    public void unregisterObserver(LandlordObserver observer) {
+    public void detach(LandlordObserver observer) {
         observers.remove(observer);
     }
 
-    private void notifyObservers(Landlord landlord) {
+    private void notify(Landlord landlord) {
         for (LandlordObserver observer : observers) {
             observer.onLandlordChange(landlord);
         }
@@ -48,7 +48,7 @@ public class LandlordService {
             return ApiResponse.builder().data(byUuid.get()).status(HttpStatus.OK).message("")
                     .success(Boolean.TRUE).build();
         } else {
-            return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Application Not Found")
+            return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Landlord Not Found")
                     .success(Boolean.FALSE).build();
         }
     }
@@ -62,7 +62,7 @@ public class LandlordService {
                 .firstName(userDetails.getFirstName())
                 .lastName(userDetails.getLastName()).build();
         landlordRepository.save(landlord);
-        notifyObservers(landlord);
+        notify(landlord); //to notify the creation of landlord
         return ApiResponse.builder().status(HttpStatus.CREATED).message("Landlord Created")
                 .success(Boolean.TRUE).build();
     }
@@ -80,7 +80,7 @@ public class LandlordService {
             landlord.setAddress(AddUserDetails.getAddress());
             landlord.setOccupation(AddUserDetails.getOccupation());
             landlordRepository.save(landlord);
-            notifyObservers(landlord);
+            notify(landlord); //to notify the updates made to Landlord
             return ApiResponse.builder().status(HttpStatus.OK).message("Landlord Details Updated")
                     .success(Boolean.TRUE).build();
         }
