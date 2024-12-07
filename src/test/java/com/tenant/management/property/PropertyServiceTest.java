@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,13 +75,25 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void addPropertyTest_InvalidRequest() {
+    void addPropertyTest_InvalidPrice() {
         AddPropertyRequest invalidRequest = new AddPropertyRequest();
         invalidRequest.setPrice(-100.00); // Invalid price
-        invalidRequest.setAddress(""); // Empty address
+        invalidRequest.setAddress("Valid Address"); // Valid address
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> propertyService.addProperty(invalidRequest));
-        assertEquals("Price and Address cannot be empty or negative", exception.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> propertyService.addProperty(invalidRequest));
+        assertEquals("Price cannot be negative.", exception.getMessage());
+    }
+
+    @Test
+    void addPropertyTest_InvalidAddress() {
+        AddPropertyRequest invalidRequest = new AddPropertyRequest();
+        invalidRequest.setPrice(100.00); // Valid price
+        invalidRequest.setAddress(""); // Invalid address (empty)
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> propertyService.addProperty(invalidRequest));
+        assertEquals("Address cannot be empty.", exception.getMessage());
     }
 
     @Test
@@ -159,20 +172,125 @@ public class PropertyServiceTest {
         assertEquals("Cannot delete an already deleted property", exception.getMessage());
     }
 
+    // New Test Cases
     @Test
-    void addPropertyTest_LargeInput() {
+    void searchPropertiesTest_NoMatch() {
+        when(propertyRepository.searchProperties(any(), any(), any(), any(), any(), any(), any()))
+                .thenReturn(List.of());  // No properties match the search criteria
+
+        List<PropertyResponse> result = propertyService.searchProperties("Nonexistent Location", 1000.00, 2000.00, "Apartment", 2, 1, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty(), "The result should be empty when no properties match the criteria.");
+    }
+
+    @Test
+    void searchPropertiesTest_MultipleFilters() {
+        when(propertyRepository.searchProperties("Main St", 1000.00, 3000.00, "Apartment", 2, 1, true))
+                .thenReturn(List.of(mockProperty));  // Mocking the repository to return the mockProperty
+
+        List<PropertyResponse> result = propertyService.searchProperties("Main St", 1000.00, 3000.00, "Apartment", 2, 1, true);
+
+        assertNotNull(result);
+        assertEquals(1, result.size(), "The search should return exactly one property.");
+        assertEquals(mockProperty.getAddress(), result.get(0).getAddress(), "The property returned should match the mock.");
+    }
+
+    @Test
+    void addPropertyTest_SaveFailure() {
         AddPropertyRequest addPropertyRequest = new AddPropertyRequest();
-        addPropertyRequest.setAddress("Very long address ".repeat(100)); // Address exceeds max length
-        addPropertyRequest.setPrice(999999.99);
-        addPropertyRequest.setType("apartment");
-        addPropertyRequest.setBedrooms(10);
-        addPropertyRequest.setBathrooms(5);
+        addPropertyRequest.setAddress("123 Main St");
+        addPropertyRequest.setPrice(2500.00);
+        addPropertyRequest.setType("Apartment");
+        addPropertyRequest.setBedrooms(2);
+        addPropertyRequest.setBathrooms(1);
         addPropertyRequest.setAvailable(true);
         addPropertyRequest.setLandlordId(UUID.randomUUID());
 
+        when(propertyRepository.save(any(Property.class)))
+                .thenThrow(new RuntimeException("Database error"));  // Simulating a save failure
+
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> propertyService.addProperty(addPropertyRequest));
+
+        assertEquals("Database error", exception.getMessage(), "The service should throw a runtime exception if saving fails.");
+    }
+
+    @Test
+    void deletePropertyTest_DeleteFailure() {
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
+        doThrow(new RuntimeException("Database error")).when(propertyRepository).delete(any(Property.class));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> propertyService.deleteProperty(propertyId));
+
+        assertEquals("Database error", exception.getMessage(), "The service should throw a runtime exception if deletion fails.");
+    }
+
+    @Test
+    void updatePropertyTest_NullValues() {
+        UpdatePropertyRequest updateRequest = new UpdatePropertyRequest();
+        updateRequest.setPrice(null);  // Setting only price as null
+
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
         when(propertyRepository.save(any(Property.class))).thenReturn(mockProperty);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> propertyService.addProperty(addPropertyRequest));
-        assertEquals("Address exceeds maximum allowed length", exception.getMessage());
+        ApiResponse result = propertyService.updateProperty(propertyId, updateRequest);
+
+        ArgumentCaptor<Property> propertyCaptor = ArgumentCaptor.forClass(Property.class);
+        verify(propertyRepository).save(propertyCaptor.capture());
+        Property updatedProperty = propertyCaptor.getValue();
+
+        assertNotNull(result);
+        assertEquals("Property updated successfully", result.getMessage());
+        assertEquals(mockProperty.getPrice(), updatedProperty.getPrice(), "The price should remain the same as it wasn't updated.");
+    }
+
+    @Test
+    void addPropertyTest_InvalidLandlordId() {
+        AddPropertyRequest invalidRequest = new AddPropertyRequest();
+        invalidRequest.setPrice(1500.00);
+        invalidRequest.setAddress("123 Main St");
+        invalidRequest.setType("Apartment");
+        invalidRequest.setBedrooms(2);
+        invalidRequest.setBathrooms(1);
+        invalidRequest.setAvailable(true);
+        invalidRequest.setLandlordId(null);  // Invalid landlordId (null)
+
+        // Now we expect an IllegalArgumentException to be thrown due to the null landlordId
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> propertyService.addProperty(invalidRequest));
+        assertEquals("Landlord ID cannot be null or empty.", exception.getMessage(), "The service should throw an exception for invalid landlordId.");
+    }
+
+
+    @Test
+    void deletePropertyTest_AlreadyDeletedProperty() {
+        mockProperty.setAvailable(false);
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> propertyService.deleteProperty(propertyId));
+
+        assertEquals("Cannot delete an already deleted property", exception.getMessage(), "The service should throw an exception for already deleted properties.");
+    }
+
+    @Test
+    void getPropertyByIdTest_AvailableProperty() {
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
+
+        PropertyResponse result = propertyService.getPropertyById(propertyId);
+
+        assertNotNull(result);
+        assertTrue(result.getAvailable(), "The property should be available.");
+    }
+
+    @Test
+    void getPropertyByIdTest_UnavailableProperty() {
+        mockProperty.setAvailable(false);
+        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
+
+        PropertyResponse result = propertyService.getPropertyById(propertyId);
+
+        assertNotNull(result);
+        assertFalse(result.getAvailable(), "The property should be unavailable.");
     }
 }

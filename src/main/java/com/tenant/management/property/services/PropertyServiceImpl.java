@@ -35,6 +35,10 @@ public class PropertyServiceImpl implements PropertyService {
         if (addPropertyRequest.getAddress() == null || addPropertyRequest.getAddress().isEmpty()) {
             throw new IllegalArgumentException("Address cannot be empty.");
         }
+        if (addPropertyRequest.getLandlordId() == null || addPropertyRequest.getLandlordId().toString().trim().isEmpty()) {
+            throw new IllegalArgumentException("Landlord ID cannot be null or empty.");
+        }
+
 
         Property property = PropertyFactory.createProperty(
                 addPropertyRequest.getType(),
@@ -59,7 +63,7 @@ public class PropertyServiceImpl implements PropertyService {
     public ApiResponse updateProperty(UUID propertyId, UpdatePropertyRequest updateRequest) {
         Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
         if (optionalProperty.isEmpty()) {
-            throw new IllegalArgumentException(PROPERTY_NOT_FOUND_MESSAGE);
+            throw new IllegalArgumentException(PROPERTY_NOT_FOUND_ID_MESSAGE + propertyId);
         }
         Property property = optionalProperty.get();
         if (updateRequest.getAddress() != null) property.setAddress(updateRequest.getAddress());
