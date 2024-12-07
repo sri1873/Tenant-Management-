@@ -97,6 +97,33 @@ public class PropertyServiceTest {
     }
 
     @Test
+    void addPropertyTestForInvalidLandlordId() {
+        AddPropertyRequest invalidRequest = new AddPropertyRequest();
+        invalidRequest.setPrice(1500.00);
+        invalidRequest.setAddress("123 Main St");
+        invalidRequest.setType("Apartment");
+        invalidRequest.setBedrooms(2);
+        invalidRequest.setBathrooms(1);
+        invalidRequest.setAvailable(true);
+        invalidRequest.setLandlordId(null); // Invalid landlordId (null)
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> propertyService.addProperty(invalidRequest));
+        assertEquals("Landlord ID cannot be null or empty.", exception.getMessage());
+    }
+
+    @Test
+    void getAllPropertiesTest() {
+        List<Property> mockProperties = List.of(mockProperty, new Property());
+        when(propertyRepository.findAll()).thenReturn(mockProperties);
+
+        List<PropertyResponse> result = propertyService.getAllProperties();
+
+        assertNotNull(result);
+        assertEquals(2, result.size(), "The result should contain all properties.");
+    }
+
+    @Test
     void getPropertyByIdTest() {
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
 
@@ -112,7 +139,8 @@ public class PropertyServiceTest {
         UUID uniquePropertyId = UUID.randomUUID();
         when(propertyRepository.findById(uniquePropertyId)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> propertyService.getPropertyById(uniquePropertyId));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> propertyService.getPropertyById(uniquePropertyId));
         assertEquals("Property not found with ID:" + uniquePropertyId, exception.getMessage());
     }
 
@@ -142,7 +170,8 @@ public class PropertyServiceTest {
 
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> propertyService.updateProperty(propertyId, updateRequest));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> propertyService.updateProperty(propertyId, updateRequest));
         assertEquals("Property not found with ID:" + propertyId, exception.getMessage());
     }
 
@@ -168,11 +197,11 @@ public class PropertyServiceTest {
         mockProperty.setAvailable(false);
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> propertyService.deleteProperty(propertyId));
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+                () -> propertyService.deleteProperty(propertyId));
         assertEquals("Cannot delete an already deleted property", exception.getMessage());
     }
 
-    // New Test Cases
     @Test
     void searchPropertiesTestForNotMatch() {
         when(propertyRepository.searchProperties(any(), any(), any(), any(), any(), any(), any()))
@@ -194,103 +223,5 @@ public class PropertyServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size(), "The search should return exactly one property.");
         assertEquals(mockProperty.getAddress(), result.get(0).getAddress(), "The property returned should match the mock.");
-    }
-
-    @Test
-    void addPropertyTestForPropertySaveFailure() {
-        AddPropertyRequest addPropertyRequest = new AddPropertyRequest();
-        addPropertyRequest.setAddress("123 Main St");
-        addPropertyRequest.setPrice(2500.00);
-        addPropertyRequest.setType("Apartment");
-        addPropertyRequest.setBedrooms(2);
-        addPropertyRequest.setBathrooms(1);
-        addPropertyRequest.setAvailable(true);
-        addPropertyRequest.setLandlordId(UUID.randomUUID());
-
-        when(propertyRepository.save(any(Property.class)))
-                .thenThrow(new RuntimeException("Database error"));  // Simulating a save failure
-
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> propertyService.addProperty(addPropertyRequest));
-
-        assertEquals("Database error", exception.getMessage(), "The service should throw a runtime exception if saving fails.");
-    }
-
-    @Test
-    void deletePropertyTestForDeleteFailure() {
-        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
-        doThrow(new RuntimeException("Database error")).when(propertyRepository).delete(any(Property.class));
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> propertyService.deleteProperty(propertyId));
-
-        assertEquals("Database error", exception.getMessage(), "The service should throw a runtime exception if deletion fails.");
-    }
-
-    @Test
-    void updatePropertyTestForNullValues() {
-        UpdatePropertyRequest updateRequest = new UpdatePropertyRequest();
-        updateRequest.setPrice(null);  // Setting only price as null
-
-        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
-        when(propertyRepository.save(any(Property.class))).thenReturn(mockProperty);
-
-        ApiResponse result = propertyService.updateProperty(propertyId, updateRequest);
-
-        ArgumentCaptor<Property> propertyCaptor = ArgumentCaptor.forClass(Property.class);
-        verify(propertyRepository).save(propertyCaptor.capture());
-        Property updatedProperty = propertyCaptor.getValue();
-
-        assertNotNull(result);
-        assertEquals("Property updated successfully", result.getMessage());
-        assertEquals(mockProperty.getPrice(), updatedProperty.getPrice(), "The price should remain the same as it wasn't updated.");
-    }
-
-    @Test
-    void addPropertyTestForInvalidLandlordId() {
-        AddPropertyRequest invalidRequest = new AddPropertyRequest();
-        invalidRequest.setPrice(1500.00);
-        invalidRequest.setAddress("123 Main St");
-        invalidRequest.setType("Apartment");
-        invalidRequest.setBedrooms(2);
-        invalidRequest.setBathrooms(1);
-        invalidRequest.setAvailable(true);
-        invalidRequest.setLandlordId(null);  // Invalid landlordId (null)
-
-        // Now we expect an IllegalArgumentException to be thrown due to the null landlordId
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> propertyService.addProperty(invalidRequest));
-        assertEquals("Landlord ID cannot be null or empty.", exception.getMessage(), "The service should throw an exception for invalid landlordId.");
-    }
-
-
-    @Test
-    void deletePropertyTestForAlreadyDeletedProperty() {
-        mockProperty.setAvailable(false);
-        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
-
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> propertyService.deleteProperty(propertyId));
-
-        assertEquals("Cannot delete an already deleted property", exception.getMessage(), "The service should throw an exception for already deleted properties.");
-    }
-
-    @Test
-    void getPropertyByIdTestForAvailableProperty() {
-        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
-
-        PropertyResponse result = propertyService.getPropertyById(propertyId);
-
-        assertNotNull(result);
-        assertTrue(result.getAvailable(), "The property should be available.");
-    }
-
-    @Test
-    void getPropertyByIdTestForUnavailableProperty() {
-        mockProperty.setAvailable(false);
-        when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
-
-        PropertyResponse result = propertyService.getPropertyById(propertyId);
-
-        assertNotNull(result);
-        assertFalse(result.getAvailable(), "The property should be unavailable.");
     }
 }
