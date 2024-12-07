@@ -1,4 +1,4 @@
-package com.tenant.management.user.services;
+package com.tenant.management.user.services.AdminServices;
 
 import com.tenant.management.user.entities.Admin;
 import com.tenant.management.user.entities.Issue;
@@ -7,6 +7,7 @@ import com.tenant.management.user.repositories.IssueRepository;
 import com.tenant.management.user.requestdtos.AddIssueDetails;
 import com.tenant.management.user.requestdtos.AddUserDetails;
 import com.tenant.management.utils.ApiResponse;
+import com.tenant.management.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,11 @@ import java.util.UUID;
 
 @Service
 public class AdminService {
+    //    Observer Pattern implementation
+    private final List<AdminObserver> observers;
     @Autowired
     private AdminRepository adminRepository;
     private IssueRepository issueRepository;
-
-    //    Observer Pattern implementation
-    private final List<AdminObserver> observers;
 
     public AdminService() {
         this.observers = new ArrayList<>();
@@ -42,6 +42,7 @@ public class AdminService {
             observer.onAdminChange(admin);
         }
     }
+
     public ApiResponse getAdminById(UUID adminId) {
         Optional<Admin> byUuid = adminRepository.findByUuid(adminId);
         if (byUuid.isPresent()) {
@@ -78,7 +79,7 @@ public class AdminService {
         Optional<Admin> optionalAdmin = adminRepository.findByUuid(issueDetails.getAdminId());
         Issue issue = Issue.builder().issueId(UUID.randomUUID())
                 .userType(issueDetails.getUserType())
-                .issueStatus(issueDetails.getIssueStatus())
+                .issueStatus(AppConstants.IssueStatus.OPEN)
                 .issueDescription(issueDetails.getIssueDescription()).build();
         issueRepository.save(issue);
         notify(optionalAdmin.get());
@@ -91,7 +92,7 @@ public class AdminService {
         Optional<Admin> optionalAdmin = adminRepository.findByUuid(issueDetails.getAdminId());
         if (byUuid.isPresent()) {
             Issue issue = byUuid.get();
-            issue.setIssueStatus(issueDetails.getIssueStatus());
+            issue.setIssueStatus(AppConstants.IssueStatus.valueOf(issueDetails.getIssueStatus()));
             issueRepository.save(issue);
             notify(optionalAdmin.get());
             return ApiResponse.builder().status(HttpStatus.OK).message("Issue Status Updated")

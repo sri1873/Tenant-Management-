@@ -1,4 +1,4 @@
-package com.tenant.management.user.services;
+package com.tenant.management.user.services.LandlordServices;
 
 import com.tenant.management.user.entities.Landlord;
 import com.tenant.management.user.repositories.LandlordRepository;
@@ -87,6 +87,7 @@ public class LandlordService {
         return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Landlord Not Found")
                 .success(Boolean.FALSE).build();
     }
+
     public void deleteLandlord(UUID userId) {
         landlordRepository.deleteById(userId);
         ApiResponse.builder().status(HttpStatus.OK).message("Landlord Deleted")

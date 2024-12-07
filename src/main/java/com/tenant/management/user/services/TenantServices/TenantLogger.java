@@ -1,4 +1,4 @@
-package com.tenant.management.user.services;
+package com.tenant.management.user.services.TenantServices;
 
 import com.tenant.management.user.entities.Tenant;
 import org.slf4j.Logger;

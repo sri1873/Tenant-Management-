@@ -1,5 +1,6 @@
 package com.tenant.management.user.entities;
 
+import com.tenant.management.utils.AppConstants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ public class Issue {
     @Id
     private UUID issueId = UUID.randomUUID();
     private String userType;
-    private String issueStatus;
+    private AppConstants.IssueStatus issueStatus;
     private String issueDescription;
 
 

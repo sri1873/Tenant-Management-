@@ -1,9 +1,10 @@
 package com.tenant.management.user.controller;
 
-import com.tenant.management.user.entities.Issue;
 import com.tenant.management.user.requestdtos.AddIssueDetails;
 import com.tenant.management.user.requestdtos.AddUserDetails;
-import com.tenant.management.user.services.AdminService;
+import com.tenant.management.user.requestdtos.RtbRequestDto;
+import com.tenant.management.user.services.AdminServices.AdminService;
+import com.tenant.management.user.services.AdminServices.RtbService;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,12 @@ public class AdminController {
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
+    private RtbService rtbService;
 
+    @PostMapping("/updateRtbStatus")
+    public ApiResponse updateRtbStatus(@RequestBody RtbRequestDto rtbRequestDto) {
+        return rtbService.updateRtbStatus(rtbRequestDto);
+    }
     @GetMapping("/getAdminById/{adminId}")
     public ResponseEntity<ApiResponse> getAdminById(@RequestBody UUID adminId) {
         ApiResponse admin = adminService.getAdminById(adminId);

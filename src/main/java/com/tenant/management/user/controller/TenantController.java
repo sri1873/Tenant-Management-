@@ -2,7 +2,7 @@ package com.tenant.management.user.controller;
 
 import com.tenant.management.user.entities.Tenant;
 import com.tenant.management.user.requestdtos.AddUserDetails;
-import com.tenant.management.user.services.TenantService;
+import com.tenant.management.user.services.TenantServices.TenantService;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.tenant.management.user.services;
+package com.tenant.management.user.services.TenantServices;
 
 import com.tenant.management.user.entities.Tenant;
 import com.tenant.management.user.repositories.TenantRepository;
@@ -15,11 +15,10 @@ import java.util.UUID;
 
 @Service
 public class TenantService {
+    //    Observer Pattern implementation
+    private final List<TenantObserver> observers;
     @Autowired
     private TenantRepository tenantRepository;
-
-//    Observer Pattern implementation
-    private final List<TenantObserver> observers;
 
     public TenantService() {
         this.observers = new ArrayList<>();
@@ -41,7 +40,7 @@ public class TenantService {
 
 
     //    TENANT APIS
-    public ApiResponse getTenantById(UUID userId){
+    public ApiResponse getTenantById(UUID userId) {
         Optional<Tenant> byUuid = tenantRepository.findByUuid(userId);
         if (byUuid.isPresent()) {
             return ApiResponse.builder().data(byUuid.get()).status(HttpStatus.OK).message("")

@@ -1,9 +1,9 @@
 package com.tenant.management;
 
-import com.tenant.management.user.services.LandlordLogger;
-import com.tenant.management.user.services.LandlordService;
-import com.tenant.management.user.services.TenantLogger;
-import com.tenant.management.user.services.TenantService;
+import com.tenant.management.user.services.LandlordServices.LandlordLogger;
+import com.tenant.management.user.services.LandlordServices.LandlordService;
+import com.tenant.management.user.services.TenantServices.TenantLogger;
+import com.tenant.management.user.services.TenantServices.TenantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

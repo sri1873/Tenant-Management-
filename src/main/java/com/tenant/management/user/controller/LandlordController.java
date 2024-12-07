@@ -1,10 +1,9 @@
 package com.tenant.management.user.controller;
 
 import com.tenant.management.user.entities.Landlord;
-import com.tenant.management.user.requestdtos.AddIssueDetails;
 import com.tenant.management.user.requestdtos.AddUserDetails;
-import com.tenant.management.user.services.AdminService;
-import com.tenant.management.user.services.LandlordService;
+import com.tenant.management.user.services.AdminServices.AdminService;
+import com.tenant.management.user.services.LandlordServices.LandlordService;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
