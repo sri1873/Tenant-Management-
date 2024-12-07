@@ -15,10 +15,23 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/properties")
+@CrossOrigin(origins = "http://localhost:3000")
 public class PropertyController {
 
+    private final PropertyService propertyService;
+
+    // Constructor injection for PropertyService
     @Autowired
-    private PropertyService propertyService;
+    public PropertyController(PropertyService propertyService) {
+        this.propertyService = propertyService;
+    }
+
+    // Get All Properties
+    @GetMapping("/allProperties")
+    public ResponseEntity<List<PropertyResponse>> getAllProperties() {
+        List<PropertyResponse> properties = propertyService.getAllProperties();
+        return new ResponseEntity<>(properties, HttpStatus.OK);
+    }
 
     // Add Property
     @PostMapping("/addPropertyDetails")
@@ -60,7 +73,6 @@ public class PropertyController {
             @RequestParam(required = false) Integer bedrooms,
             @RequestParam(required = false) Integer bathrooms,
             @RequestParam(required = false) Boolean available) {
-
         List<PropertyResponse> properties = propertyService.searchProperties(location, minPrice, maxPrice, type, bedrooms, bathrooms, available);
         return new ResponseEntity<>(properties, HttpStatus.OK);
     }

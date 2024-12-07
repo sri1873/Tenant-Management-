@@ -18,5 +18,7 @@ public interface PropertyService {
 
     ApiResponse deleteProperty(UUID propertyId);
 
+    List<PropertyResponse> getAllProperties();
+
     List<PropertyResponse> searchProperties(String location, Double minPrice, Double maxPrice, String type, Integer bedrooms, Integer bathrooms, Boolean available);
 }
