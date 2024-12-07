@@ -75,7 +75,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void addPropertyTest_InvalidPrice() {
+    void addPropertyTestForInvalidPrice() {
         AddPropertyRequest invalidRequest = new AddPropertyRequest();
         invalidRequest.setPrice(-100.00); // Invalid price
         invalidRequest.setAddress("Valid Address"); // Valid address
@@ -86,7 +86,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void addPropertyTest_InvalidAddress() {
+    void addPropertyTestForInvalidAddress() {
         AddPropertyRequest invalidRequest = new AddPropertyRequest();
         invalidRequest.setPrice(100.00); // Valid price
         invalidRequest.setAddress(""); // Invalid address (empty)
@@ -108,7 +108,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void getPropertyById_NotFound() {
+    void getPropertyByIdForNotFound() {
         UUID uniquePropertyId = UUID.randomUUID();
         when(propertyRepository.findById(uniquePropertyId)).thenReturn(Optional.empty());
 
@@ -136,7 +136,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void updatePropertyTest_NotFound() {
+    void updatePropertyTestForNotFound() {
         UpdatePropertyRequest updateRequest = new UpdatePropertyRequest();
         updateRequest.setPrice(3000.00);
 
@@ -156,7 +156,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void deletePropertyTest_NotFound() {
+    void deletePropertyTestForNotFound() {
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
         ApiResponse result = propertyService.deleteProperty(propertyId);
         assertFalse(result.getSuccess());
@@ -164,7 +164,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void deletePropertyTest_AlreadyDeleted() {
+    void deletePropertyTestForAlreadyDeleted() {
         mockProperty.setAvailable(false);
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
 
@@ -174,7 +174,7 @@ public class PropertyServiceTest {
 
     // New Test Cases
     @Test
-    void searchPropertiesTest_NoMatch() {
+    void searchPropertiesTestForNotMatch() {
         when(propertyRepository.searchProperties(any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(List.of());  // No properties match the search criteria
 
@@ -185,7 +185,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void searchPropertiesTest_MultipleFilters() {
+    void searchPropertiesTestForMultipleFilters() {
         when(propertyRepository.searchProperties("Main St", 1000.00, 3000.00, "Apartment", 2, 1, true))
                 .thenReturn(List.of(mockProperty));  // Mocking the repository to return the mockProperty
 
@@ -197,7 +197,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void addPropertyTest_SaveFailure() {
+    void addPropertyTestForPropertySaveFailure() {
         AddPropertyRequest addPropertyRequest = new AddPropertyRequest();
         addPropertyRequest.setAddress("123 Main St");
         addPropertyRequest.setPrice(2500.00);
@@ -217,7 +217,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void deletePropertyTest_DeleteFailure() {
+    void deletePropertyTestForDeleteFailure() {
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
         doThrow(new RuntimeException("Database error")).when(propertyRepository).delete(any(Property.class));
 
@@ -227,7 +227,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void updatePropertyTest_NullValues() {
+    void updatePropertyTestForNullValues() {
         UpdatePropertyRequest updateRequest = new UpdatePropertyRequest();
         updateRequest.setPrice(null);  // Setting only price as null
 
@@ -246,7 +246,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void addPropertyTest_InvalidLandlordId() {
+    void addPropertyTestForInvalidLandlordId() {
         AddPropertyRequest invalidRequest = new AddPropertyRequest();
         invalidRequest.setPrice(1500.00);
         invalidRequest.setAddress("123 Main St");
@@ -264,7 +264,7 @@ public class PropertyServiceTest {
 
 
     @Test
-    void deletePropertyTest_AlreadyDeletedProperty() {
+    void deletePropertyTestForAlreadyDeletedProperty() {
         mockProperty.setAvailable(false);
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
 
@@ -274,7 +274,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void getPropertyByIdTest_AvailableProperty() {
+    void getPropertyByIdTestForAvailableProperty() {
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
 
         PropertyResponse result = propertyService.getPropertyById(propertyId);
@@ -284,7 +284,7 @@ public class PropertyServiceTest {
     }
 
     @Test
-    void getPropertyByIdTest_UnavailableProperty() {
+    void getPropertyByIdTestForUnavailableProperty() {
         mockProperty.setAvailable(false);
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
 
