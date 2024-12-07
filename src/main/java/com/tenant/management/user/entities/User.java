@@ -2,22 +2,21 @@ package com.tenant.management.user.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "app_user")
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
     @Id
-    @Builder.Default
     private UUID userId = UUID.randomUUID();
 
     private String firstName;

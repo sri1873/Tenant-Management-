@@ -2,7 +2,7 @@ package com.tenant.management.rental.services;
 
 import com.tenant.management.rental.entities.PropertyVisit;
 import com.tenant.management.rental.repositories.PropertyVisitRepository;
-import com.tenant.management.rental.requestDtos.SubmitApplicationRequest;
+import com.tenant.management.rental.requestdtos.SubmitApplicationRequest;
 import com.tenant.management.utils.ApiResponse;
 import com.tenant.management.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;

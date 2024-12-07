@@ -1,6 +1,7 @@
-package com.tenant.management.property.requestDtos;
+package com.tenant.management.property.requestdtos;
 
 import lombok.Data;
+
 import java.util.UUID;
 
 @Data

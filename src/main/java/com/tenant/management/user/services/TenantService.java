@@ -2,6 +2,7 @@ package com.tenant.management.user.services;
 
 import com.tenant.management.user.entities.Tenant;
 import com.tenant.management.user.repositories.TenantRepository;
+import com.tenant.management.user.requestdtos.AddUserDetails;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,8 +16,8 @@ public class TenantService {
     @Autowired
     private TenantRepository tenantRepository;
 
-//    TENANT APIS
-    public ApiResponse getTenantById(UUID userId){
+    //    TENANT APIS
+    public ApiResponse getTenantById(UUID userId) {
         Optional<Tenant> byUuid = tenantRepository.findByUuid(userId);
         if (byUuid.isPresent()) {
             return ApiResponse.builder().data(byUuid.get()).status(HttpStatus.OK).message("")
@@ -27,16 +28,23 @@ public class TenantService {
         }
     }
 
-    public ApiResponse createTenant(Tenant tenant){
+    public ApiResponse createTenant(AddUserDetails userDetails) {
+        Tenant tenant = Tenant.builder().email(userDetails.getEmail())
+                .address(userDetails.getAddress()).userId(UUID.randomUUID())
+                .phoneNumber(userDetails.getPhoneNumber())
+                .occupation(userDetails.getOccupation())
+                .password(userDetails.getPassword())
+                .firstName(userDetails.getFirstName())
+                .lastName(userDetails.getLastName()).build();
         tenantRepository.save(tenant);
         return ApiResponse.builder().status(HttpStatus.CREATED).message("Tenant Created")
                 .success(Boolean.TRUE).build();
     }
 
     public ApiResponse updateTenant(UUID userId, Tenant AddUserDetails) {
-        Optional<Tenant> byUuid =  tenantRepository.findByUuid(userId);
+        Optional<Tenant> byUuid = tenantRepository.findByUuid(userId);
         if (byUuid.isPresent()) {
-            Tenant tenant=byUuid.get();
+            Tenant tenant = byUuid.get();
             tenant.setFirstName(AddUserDetails.getFirstName());
             tenant.setLastName(AddUserDetails.getLastName());
             tenant.setEmail(AddUserDetails.getEmail());

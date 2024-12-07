@@ -1,6 +1,7 @@
 package com.tenant.management.user.controller;
 
 import com.tenant.management.user.entities.Tenant;
+import com.tenant.management.user.requestdtos.AddUserDetails;
 import com.tenant.management.user.services.TenantService;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,11 @@ public class TenantController {
     }
 
     @PostMapping("/tenant")
-    public ResponseEntity<ApiResponse> createTenant(@RequestBody Tenant tenant) {
-        ApiResponse createdTenant = tenantService.createTenant(tenant);
-        return new ResponseEntity<>(createdTenant,HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse> createTenant(@RequestBody AddUserDetails addUserDetails) {
+        ApiResponse createdTenant = tenantService.createTenant(addUserDetails);
+        return new ResponseEntity<>(createdTenant, HttpStatus.CREATED);
     }
+
     @PutMapping("/tenant/{userId}")
     public ResponseEntity<ApiResponse> updateTenant(@RequestBody UUID userId, Tenant AddUserDetails) {
         ApiResponse updatedTenant = tenantService.updateTenant(userId, AddUserDetails);
@@ -39,6 +41,6 @@ public class TenantController {
     @DeleteMapping("/tenants/{id}")
     public ResponseEntity<ApiResponse> deleteTenant(@RequestBody UUID userId) {
 
-        return new ResponseEntity<>(tenantService.deleteTenant(userId),HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(tenantService.deleteTenant(userId), HttpStatus.NO_CONTENT);
     }
 }

@@ -1,8 +1,8 @@
 package com.tenant.management.property.factories;
 
 import com.tenant.management.property.entities.Apartment;
-import com.tenant.management.property.entities.House;
 import com.tenant.management.property.entities.Condo;
+import com.tenant.management.property.entities.House;
 import com.tenant.management.property.entities.Property;
 
 import java.util.UUID;

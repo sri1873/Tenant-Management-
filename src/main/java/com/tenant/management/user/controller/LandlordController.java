@@ -1,8 +1,8 @@
 package com.tenant.management.user.controller;
 
 import com.tenant.management.user.entities.Landlord;
+import com.tenant.management.user.requestdtos.AddUserDetails;
 import com.tenant.management.user.services.LandlordService;
-
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,10 +27,11 @@ public class LandlordController {
     }
 
     @PostMapping("/landlord")
-    public ResponseEntity<ApiResponse> createLandlord(@RequestBody Landlord landlord) {
-        ApiResponse createdLandlord = landlordService.createLandlord(landlord);
-        return new ResponseEntity<>(createdLandlord,HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse> createLandlord(@RequestBody AddUserDetails userDetails) {
+        ApiResponse createdLandlord = landlordService.createLandlord(userDetails);
+        return new ResponseEntity<>(createdLandlord, HttpStatus.CREATED);
     }
+
     @PutMapping("/landlord/{userId}")
     public ResponseEntity<ApiResponse> updateLandlord(@RequestBody UUID userId, Landlord AddUserDetails) {
         ApiResponse updatedLandlord = landlordService.updateLandlord(userId, AddUserDetails);

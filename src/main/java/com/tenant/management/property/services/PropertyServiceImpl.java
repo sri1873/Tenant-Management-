@@ -4,9 +4,9 @@ import com.tenant.management.property.entities.Property;
 import com.tenant.management.property.factories.PropertyFactory;
 import com.tenant.management.property.repositories.PropertyRepository;
 import com.tenant.management.property.repositories.PropertyService;
-import com.tenant.management.property.requestDtos.AddPropertyRequest;
-import com.tenant.management.property.requestDtos.UpdatePropertyRequest;
-import com.tenant.management.property.requestDtos.PropertyResponse;
+import com.tenant.management.property.requestdtos.AddPropertyRequest;
+import com.tenant.management.property.requestdtos.PropertyResponse;
+import com.tenant.management.property.requestdtos.UpdatePropertyRequest;
 import com.tenant.management.utils.ApiResponse;
 import org.springframework.stereotype.Service;
 
