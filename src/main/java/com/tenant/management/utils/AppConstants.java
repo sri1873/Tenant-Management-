@@ -16,7 +16,7 @@ public class AppConstants {
         CANCELLED
     }
 
-    public enum IssueStatus{
+    public enum IssueStatus {
         OPEN,
         RESOLVED,
         CLOSED

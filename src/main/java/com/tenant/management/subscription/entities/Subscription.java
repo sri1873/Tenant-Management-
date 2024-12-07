@@ -1,9 +1,7 @@
 package com.tenant.management.subscription.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.tenant.management.user.entities.Tenant;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -17,8 +15,9 @@ public class Subscription {
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
-    private UUID tenantId; // Link subscription to a tenant
+    @OneToOne
+    @JoinColumn(name = "tenantId")
+    private Tenant tenantId; // Link subscription to a tenant
 
     @Column(nullable = false)
     private String planType; // Normal, Plus, Premium

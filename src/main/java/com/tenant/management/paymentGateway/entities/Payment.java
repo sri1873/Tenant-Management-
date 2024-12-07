@@ -1,9 +1,8 @@
 package com.tenant.management.paymentGateway.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.tenant.management.property.entities.Property;
+import com.tenant.management.user.entities.Tenant;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -17,11 +16,13 @@ public class Payment {
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
-    private UUID tenantId; // Tenant while making payment
+    @ManyToOne
+    @JoinColumn(name = "tenantId")
+    private Tenant tenantId; // Tenant while making payment
 
-    @Column(nullable = false)
-    private UUID propertyId; // Property payment
+    @ManyToOne
+    @JoinColumn(name = "propertyId")
+    private Property propertyId; // Property payment
 
     @Column(nullable = false)
     private Double amount;

@@ -4,11 +4,14 @@ import com.tenant.management.subscription.entities.Subscription;
 import com.tenant.management.subscription.repositories.SubscriptionRepository;
 import com.tenant.management.subscription.requestDtos.SubscriptionRequest;
 import com.tenant.management.subscription.requestDtos.SubscriptionResponse;
+import com.tenant.management.user.entities.Tenant;
+import com.tenant.management.user.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -16,6 +19,9 @@ public class SubscriptionService {
 
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    private TenantRepository tenantRepository;
 
     public SubscriptionResponse subscribe(SubscriptionRequest request) {
         // Define prices for subscription plans
@@ -30,11 +36,11 @@ public class SubscriptionService {
             default:
                 price = 10.0; // Normal plan
         }
-
+        Optional<Tenant> optionalTenant = tenantRepository.findByUuid(request.getTenantId());
         // Create a new subscription
         Subscription subscription = new Subscription();
         subscription.setId(UUID.randomUUID());
-        subscription.setTenantId(request.getTenantId());
+        subscription.setTenantId(optionalTenant.get());
         subscription.setPlanType(request.getPlanType());
         subscription.setPrice(price);
         subscription.setStartDate(new Date());

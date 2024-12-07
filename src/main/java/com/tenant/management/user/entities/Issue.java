@@ -1,11 +1,14 @@
 package com.tenant.management.user.entities;
 
 import com.tenant.management.utils.AppConstants;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 @Entity
@@ -20,6 +23,4 @@ public class Issue {
     private String userType;
     private AppConstants.IssueStatus issueStatus;
     private String issueDescription;
-
-
 }

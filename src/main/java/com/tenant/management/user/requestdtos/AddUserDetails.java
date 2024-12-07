@@ -6,7 +6,7 @@ import lombok.Data;
 @Builder
 @Data
 public class AddUserDetails {
-//User Details
+    //User Details
     private String firstName;
     private String lastName;
     private String email;
@@ -15,10 +15,9 @@ public class AddUserDetails {
     private String address;
     private String occupation;
 
-//    Admin Details
+    //    Admin Details
     private String adminUsername;
     private String adminPassword;
-
 
 
 }

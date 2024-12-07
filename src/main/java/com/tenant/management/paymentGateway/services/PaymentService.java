@@ -4,11 +4,16 @@ import com.tenant.management.paymentGateway.entities.Payment;
 import com.tenant.management.paymentGateway.repositories.PaymentRepository;
 import com.tenant.management.paymentGateway.requestDtos.PaymentRequest;
 import com.tenant.management.paymentGateway.requestDtos.PaymentResponse;
+import com.tenant.management.property.entities.Property;
+import com.tenant.management.property.repositories.PropertyRepository;
+import com.tenant.management.user.entities.Tenant;
+import com.tenant.management.user.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -17,13 +22,19 @@ public class PaymentService {
     private final String paymentGatewayUrl = "https://api.paymentgateway.com";
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private TenantRepository tenantRepository;
+    @Autowired
+    private PropertyRepository propertyRepository;
 
     public PaymentResponse initiatePayment(PaymentRequest request) {
+        Optional<Tenant> optionalTenant = tenantRepository.findByUuid(request.getTenantId());
+        Property byId = propertyRepository.getById(request.getPropertyId());
         // Create a new payment record
         Payment payment = new Payment();
         payment.setId(UUID.randomUUID());
-        payment.setTenantId(request.getTenantId());
-        payment.setPropertyId(request.getPropertyId());
+        payment.setTenantId(optionalTenant.get());
+        payment.setPropertyId(byId);
         payment.setAmount(request.getAmount());
         payment.setStatus("PENDING");
         payment.setPaymentDate(new Date());

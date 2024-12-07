@@ -16,17 +16,18 @@ import java.util.UUID;
 @RestController
 public class AdminController {
     private final AdminService adminService;
+    private RtbService rtbService;
 
     @Autowired
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
-    private RtbService rtbService;
 
     @PostMapping("/updateRtbStatus")
     public ApiResponse updateRtbStatus(@RequestBody RtbRequestDto rtbRequestDto) {
         return rtbService.updateRtbStatus(rtbRequestDto);
     }
+
     @GetMapping("/getAdminById/{adminId}")
     public ResponseEntity<ApiResponse> getAdminById(@RequestBody UUID adminId) {
         ApiResponse admin = adminService.getAdminById(adminId);
@@ -50,6 +51,7 @@ public class AdminController {
         ApiResponse updatedStatus = adminService.updateIssueStatus(issueDetails);
         return new ResponseEntity<>(updatedStatus, HttpStatus.OK);
     }
+
     @PostMapping("/issue/raiseIssue")
     public ResponseEntity<ApiResponse> raiseIssue(@RequestBody AddIssueDetails addIssueDetails) {
         ApiResponse issueRaised = adminService.raiseIssue(addIssueDetails);

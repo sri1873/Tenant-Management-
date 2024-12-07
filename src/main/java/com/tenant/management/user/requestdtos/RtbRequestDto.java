@@ -1,9 +1,5 @@
 package com.tenant.management.user.requestdtos;
 
-import com.tenant.management.property.entities.Property;
-import com.tenant.management.user.entities.Admin;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Data;
 
