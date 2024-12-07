@@ -18,7 +18,7 @@ import java.util.UUID;
 public class PropertyServiceImpl implements PropertyService {
 
     private static final String PROPERTY_NOT_FOUND_MESSAGE = "Property not found";
-
+    private static final String PROPERTY_NOT_FOUND_ID_MESSAGE = "Property not found with ID:";
     private final PropertyRepository propertyRepository;
 
     // Constructor
@@ -28,6 +28,14 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public ApiResponse addProperty(AddPropertyRequest addPropertyRequest) {
+        // Validate the price and address
+        if (addPropertyRequest.getPrice() < 0) {
+            throw new IllegalArgumentException("Price cannot be negative.");
+        }
+        if (addPropertyRequest.getAddress() == null || addPropertyRequest.getAddress().isEmpty()) {
+            throw new IllegalArgumentException("Address cannot be empty.");
+        }
+
         Property property = PropertyFactory.createProperty(
                 addPropertyRequest.getType(),
                 addPropertyRequest.getAddress(),
@@ -37,34 +45,43 @@ public class PropertyServiceImpl implements PropertyService {
                 addPropertyRequest.getAvailable(),
                 addPropertyRequest.getLandlordId()
         );
+
+        // Save property to the repository
         propertyRepository.save(property);
-        return ApiResponse.builder().success(true).message("Property added successfully").build();
+
+        return ApiResponse.builder()
+                .success(true)
+                .message("Property added successfully")
+                .build();
     }
 
     @Override
     public ApiResponse updateProperty(UUID propertyId, UpdatePropertyRequest updateRequest) {
         Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
         if (optionalProperty.isEmpty()) {
-            return ApiResponse.builder().success(false).message(PROPERTY_NOT_FOUND_MESSAGE).build();
+            throw new IllegalArgumentException(PROPERTY_NOT_FOUND_MESSAGE);
         }
         Property property = optionalProperty.get();
-
         if (updateRequest.getAddress() != null) property.setAddress(updateRequest.getAddress());
         if (updateRequest.getPrice() != null) property.setPrice(updateRequest.getPrice());
         if (updateRequest.getType() != null) property.setType(updateRequest.getType());
         if (updateRequest.getBedrooms() != null) property.setBedrooms(updateRequest.getBedrooms());
         if (updateRequest.getBathrooms() != null) property.setBathrooms(updateRequest.getBathrooms());
         if (updateRequest.getAvailable() != null) property.setAvailable(updateRequest.getAvailable());
-
         propertyRepository.save(property);
         return ApiResponse.builder().success(true).message("Property updated successfully").build();
     }
 
+
     @Override
     public PropertyResponse getPropertyById(UUID propertyId) {
-        Property property = propertyRepository.findById(propertyId)
-                .orElseThrow(() -> new IllegalArgumentException(PROPERTY_NOT_FOUND_MESSAGE));
-        return mapToResponse(property);
+        Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
+        if (optionalProperty.isPresent()) {
+            Property property = optionalProperty.get();
+            return mapToResponse(property);
+        } else {
+            throw new IllegalArgumentException(PROPERTY_NOT_FOUND_ID_MESSAGE + propertyId);
+        }
     }
 
     @Override
@@ -73,9 +90,14 @@ public class PropertyServiceImpl implements PropertyService {
         if (optionalProperty.isEmpty()) {
             return ApiResponse.builder().success(false).message(PROPERTY_NOT_FOUND_MESSAGE).build();
         }
-        propertyRepository.delete(optionalProperty.get());
+        Property property = optionalProperty.get();
+        if (Boolean.FALSE.equals(property.getAvailable())) {
+            throw new IllegalStateException("Cannot delete an already deleted property");
+        }
+        propertyRepository.delete(property);
         return ApiResponse.builder().success(true).message("Property deleted successfully").build();
     }
+
 
     @Override
     public List<PropertyResponse> searchProperties(String location, Double minPrice, Double maxPrice, String type, Integer bedrooms, Integer bathrooms, Boolean available) {

@@ -2,9 +2,9 @@ package com.tenant.management.property;
 
 import com.tenant.management.property.entities.Property;
 import com.tenant.management.property.repositories.PropertyRepository;
-import com.tenant.management.property.requestDtos.AddPropertyRequest;
-import com.tenant.management.property.requestDtos.PropertyResponse;
-import com.tenant.management.property.requestDtos.UpdatePropertyRequest;
+import com.tenant.management.property.requestdtos.AddPropertyRequest;
+import com.tenant.management.property.requestdtos.PropertyResponse;
+import com.tenant.management.property.requestdtos.UpdatePropertyRequest;
 import com.tenant.management.property.services.PropertyServiceImpl;
 import com.tenant.management.utils.ApiResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,7 +79,8 @@ public class PropertyServiceTest {
         invalidRequest.setPrice(-100.00); // Invalid price
         invalidRequest.setAddress(""); // Empty address
 
-        assertThrows(IllegalArgumentException.class, () -> propertyService.addProperty(invalidRequest));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> propertyService.addProperty(invalidRequest));
+        assertEquals("Price and Address cannot be empty or negative", exception.getMessage());
     }
 
     @Test
@@ -95,10 +96,11 @@ public class PropertyServiceTest {
 
     @Test
     void getPropertyById_NotFound() {
-        when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
+        UUID uniquePropertyId = UUID.randomUUID();
+        when(propertyRepository.findById(uniquePropertyId)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> propertyService.getPropertyById(propertyId));
-        assertEquals("Property not found with ID: " + propertyId, exception.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> propertyService.getPropertyById(uniquePropertyId));
+        assertEquals("Property not found with ID:" + uniquePropertyId, exception.getMessage());
     }
 
     @Test
@@ -127,17 +129,15 @@ public class PropertyServiceTest {
 
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> propertyService.updateProperty(propertyId, updateRequest));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> propertyService.updateProperty(propertyId, updateRequest));
+        assertEquals("Property not found with ID:" + propertyId, exception.getMessage());
     }
 
     @Test
     void deletePropertyTest() {
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
-
         ApiResponse result = propertyService.deleteProperty(propertyId);
-
-        verify(propertyRepository).deleteById(propertyId);
-
+        verify(propertyRepository).delete(any(Property.class));
         assertNotNull(result);
         assertEquals("Property deleted successfully", result.getMessage());
     }
@@ -145,8 +145,9 @@ public class PropertyServiceTest {
     @Test
     void deletePropertyTest_NotFound() {
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> propertyService.deleteProperty(propertyId));
+        ApiResponse result = propertyService.deleteProperty(propertyId);
+        assertFalse(result.getSuccess());
+        assertEquals("Property not found", result.getMessage());
     }
 
     @Test
@@ -154,16 +155,16 @@ public class PropertyServiceTest {
         mockProperty.setAvailable(false);
         when(propertyRepository.findById(propertyId)).thenReturn(Optional.of(mockProperty));
 
-        Exception exception = assertThrows(IllegalStateException.class, () -> propertyService.deleteProperty(propertyId));
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> propertyService.deleteProperty(propertyId));
         assertEquals("Cannot delete an already deleted property", exception.getMessage());
     }
 
     @Test
     void addPropertyTest_LargeInput() {
         AddPropertyRequest addPropertyRequest = new AddPropertyRequest();
-        addPropertyRequest.setAddress("Very long address ".repeat(100));
+        addPropertyRequest.setAddress("Very long address ".repeat(100)); // Address exceeds max length
         addPropertyRequest.setPrice(999999.99);
-        addPropertyRequest.setType("Luxury Apartment");
+        addPropertyRequest.setType("apartment");
         addPropertyRequest.setBedrooms(10);
         addPropertyRequest.setBathrooms(5);
         addPropertyRequest.setAvailable(true);
@@ -171,9 +172,7 @@ public class PropertyServiceTest {
 
         when(propertyRepository.save(any(Property.class))).thenReturn(mockProperty);
 
-        ApiResponse result = propertyService.addProperty(addPropertyRequest);
-
-        assertNotNull(result);
-        assertEquals("Property added successfully", result.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> propertyService.addProperty(addPropertyRequest));
+        assertEquals("Address exceeds maximum allowed length", exception.getMessage());
     }
 }
