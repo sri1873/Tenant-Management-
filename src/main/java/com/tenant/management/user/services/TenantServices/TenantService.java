@@ -15,8 +15,10 @@ import java.util.UUID;
 
 @Service
 public class TenantService {
+
     //    Observer Pattern implementation
     private final List<TenantObserver> observers;
+
     @Autowired
     private TenantRepository tenantRepository;
 
@@ -27,11 +29,9 @@ public class TenantService {
     public void attach(TenantObserver observer) {
         observers.add(observer);
     }
-
     public void detach(TenantObserver observer) {
         observers.remove(observer);
     }
-
     private void notify(Tenant tenant) {
         for (TenantObserver observer : observers) {
             observer.onTenantChange(tenant);
