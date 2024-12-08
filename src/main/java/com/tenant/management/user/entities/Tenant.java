@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class Tenant extends User {
+    private int creditScore;
     private int rentalPoints;
     private boolean activeSubscription;
 

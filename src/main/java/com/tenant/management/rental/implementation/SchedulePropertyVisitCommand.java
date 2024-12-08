@@ -6,6 +6,8 @@ import com.tenant.management.rental.services.PropertyVisitService;
 import com.tenant.management.utils.ApiResponse;
 import com.tenant.management.utils.AppConstants;
 
+//Author : K S SRI KUMAR
+//Id : 24177474
 public class SchedulePropertyVisitCommand implements Command {
 
     private final PropertyVisit propertyVisit;
