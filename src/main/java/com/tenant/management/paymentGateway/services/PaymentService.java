@@ -69,6 +69,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
 
+        // Handle SUCCESS status
         if ("SUCCESS".equals(payment.getStatus())) {
             PaymentResponse response = new PaymentResponse();
             response.setTransactionId(payment.getTransactionId());
@@ -78,12 +79,21 @@ public class PaymentService {
             return response;
         }
 
-        throw new IllegalStateException("Payment verification failed");
+        // Handle PENDING status (you could retry after a delay or provide feedback)
+        if ("PENDING".equals(payment.getStatus())) {
+            // You can retry the check after a delay or give some other feedback
+            throw new IllegalStateException("Payment is still pending. Please try again later.");
+        }
+
+        // Handle FAILED status
+        if ("FAILED".equals(payment.getStatus())) {
+            throw new IllegalStateException("Payment failed. Please check your payment details.");
+        }
+
+        // Handle any other unexpected statuses
+        throw new IllegalStateException("Payment verification failed: Payment status is not SUCCESS. Current status: " + payment.getStatus());
     }
 
-    /**
-     * Cancel a payment if it is still in "PENDING" status.
-     */
     public PaymentResponse cancelPayment(UUID paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
@@ -104,9 +114,6 @@ public class PaymentService {
         throw new IllegalStateException("Only PENDING payments can be cancelled");
     }
 
-    /**
-     * Mark a payment as successful.
-     */
     public PaymentResponse markPaymentAsSuccess(UUID paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found"));
