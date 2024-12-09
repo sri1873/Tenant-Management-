@@ -1,3 +1,6 @@
+//Author: Mamtha Patalay
+//ID:24182559
+
 package com.tenant.management.user.services.TenantServices;
 
 import com.tenant.management.user.entities.Tenant;
@@ -15,8 +18,10 @@ import java.util.UUID;
 
 @Service
 public class TenantService {
+
     //    Observer Pattern implementation
     private final List<TenantObserver> observers;
+
     @Autowired
     private TenantRepository tenantRepository;
 

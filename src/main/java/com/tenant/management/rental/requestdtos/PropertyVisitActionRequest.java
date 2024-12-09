@@ -6,6 +6,8 @@ import lombok.Data;
 
 import java.util.UUID;
 
+//Author : K S SRI KUMAR
+//Id : 24177474
 @Builder
 @Data
 public class PropertyVisitActionRequest {

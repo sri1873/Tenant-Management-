@@ -1,5 +1,7 @@
 package com.tenant.management;
 
+import com.tenant.management.user.services.AdminServices.AdminLogger;
+import com.tenant.management.user.services.AdminServices.AdminService;
 import com.tenant.management.user.services.LandlordServices.LandlordLogger;
 import com.tenant.management.user.services.LandlordServices.LandlordService;
 import com.tenant.management.user.services.TenantServices.TenantLogger;
@@ -15,14 +17,18 @@ public class ManagementApplication {
     private final TenantLogger tenantLogger;
     private final LandlordService landlordService;
     private final LandlordLogger landlordLogger;
+    private final AdminService adminService;
+    private final AdminLogger adminLogger;
 
     @Autowired
     public ManagementApplication(TenantService tenantService, TenantLogger tenantLogger,
-                                 LandlordService landlordService, LandlordLogger landlordLogger) {
+                                 LandlordService landlordService, LandlordLogger landlordLogger, AdminService adminService, AdminLogger adminLogger) {
         this.tenantService = tenantService;
         this.tenantLogger = tenantLogger;
         this.landlordService = landlordService;
         this.landlordLogger = landlordLogger;
+        this.adminService = adminService;
+        this.adminLogger = adminLogger;
     }
 
     public static void main(String[] args) {
@@ -33,5 +39,6 @@ public class ManagementApplication {
     public void initializeObservers() {
         tenantService.attach(tenantLogger);
         landlordService.attach(landlordLogger);
+        adminService.attach(adminLogger);
     }
 }

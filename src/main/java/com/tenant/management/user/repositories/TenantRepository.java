@@ -1,3 +1,6 @@
+//Author: Mamtha Patalay
+//ID:24182559
+
 package com.tenant.management.user.repositories;
 
 import com.tenant.management.user.entities.Tenant;
@@ -12,10 +15,10 @@ import java.util.UUID;
 @Repository
 public interface TenantRepository extends JpaRepository<Tenant, UUID> {
 
-    @Query(value = "SELECT * FROM app_user au where au.userId =?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM tenant t JOIN app_user au ON t.user_id = au.user_id WHERE t.user_id = ?1", nativeQuery = true)
     Optional<Tenant> findByUuid(UUID userId);
 
-    @Query(value = "DELETE * FROM app_user au where au.userId=?1", nativeQuery = true)
+    @Query(value = "DELETE * FROM app_user au where au.user_id=?1", nativeQuery = true)
     void deleteById(@NotNull UUID userId);
 
 }

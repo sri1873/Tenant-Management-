@@ -2,8 +2,8 @@ package com.tenant.management.rental.controllers;
 
 import com.tenant.management.rental.entities.Command;
 import com.tenant.management.rental.entities.LeaseApplication;
-import com.tenant.management.rental.implementation.CommandInvoker;
-import com.tenant.management.rental.implementation.SubmitLeaseApplicationCommand;
+import com.tenant.management.rental.implementation.command.CommandInvoker;
+import com.tenant.management.rental.implementation.command.SubmitLeaseApplicationCommand;
 import com.tenant.management.rental.requestdtos.LeaseAppActionRequest;
 import com.tenant.management.rental.requestdtos.SubmitApplicationRequest;
 import com.tenant.management.rental.services.LeaseService;
@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+//Author : K S SRI KUMAR
+//Id : 24177474
 @RestController
 public class LeaseController {
 

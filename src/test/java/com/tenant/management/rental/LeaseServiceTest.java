@@ -1,8 +1,15 @@
 package com.tenant.management.rental;
 
+import com.tenant.management.property.entities.Property;
+import com.tenant.management.property.repositories.PropertyRepository;
 import com.tenant.management.rental.entities.LeaseApplication;
 import com.tenant.management.rental.repositories.LeaseRepository;
+import com.tenant.management.rental.requestdtos.SubmitApplicationRequest;
 import com.tenant.management.rental.services.LeaseService;
+import com.tenant.management.user.entities.Landlord;
+import com.tenant.management.user.entities.Tenant;
+import com.tenant.management.user.repositories.LandlordRepository;
+import com.tenant.management.user.repositories.TenantRepository;
 import com.tenant.management.utils.ApiResponse;
 import com.tenant.management.utils.AppConstants;
 import org.junit.Assert;
@@ -19,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,6 +37,13 @@ class LeaseServiceTest {
     LeaseApplication assetUser = LeaseApplication.builder().applicationId(id).status(AppConstants.ApplicationStatus.APPROVED).build();
     @Mock
     private LeaseRepository testRepository;
+
+    @Mock
+    private LandlordRepository landlordRepository;
+    @Mock
+    private TenantRepository tenantRepository;
+    @Mock
+    private PropertyRepository propertyRepository;
 
     @InjectMocks
     private LeaseService testService;
@@ -119,6 +134,45 @@ class LeaseServiceTest {
         Assert.assertEquals(Boolean.TRUE, result.getSuccess());
     }
 
+    @Test
+    void submitLeaseApplicationSuccessTest(){
+        UUID landlordId = UUID.randomUUID();
+        UUID tenantId = UUID.randomUUID();
+        UUID propertyId = UUID.randomUUID();
+        Property property = new Property();
+        property.setId(propertyId);
+        property.setPrice(100.0);
+        property.setLandlordId(landlordId);
+        SubmitApplicationRequest request = SubmitApplicationRequest.builder().propertyId(propertyId).tenantId(tenantId).landlordId(landlordId).build();
+        when(landlordRepository.findByUuid(landlordId)).thenReturn(Optional.of(Landlord.builder().userId(landlordId).build()));
+        when(tenantRepository.findByUuid(tenantId)).thenReturn(Optional.ofNullable(Tenant.builder().userId(tenantId).occupation(AppConstants.OccupationCategories.STUDENT).build()));
+        when(propertyRepository.getById(propertyId)).thenReturn(property);
+
+        ApiResponse result = testService.submitLeaseApplications(request);
+        Assert.assertEquals(result.getClass(), ApiResponse.class);
+        Assert.assertNull(result.getData());
+        Assert.assertEquals(HttpStatus.CREATED, result.getStatus());
+        Assert.assertEquals(Boolean.TRUE, result.getSuccess());
+
+    }
+    @Test
+    void submitLeaseApplicationFailureTest(){
+        UUID landlordId = UUID.randomUUID();
+        UUID tenantId = UUID.randomUUID();
+        UUID propertyId = UUID.randomUUID();
+        SubmitApplicationRequest request = SubmitApplicationRequest.builder().propertyId(propertyId).tenantId(tenantId).landlordId(landlordId).build();
+
+        when(landlordRepository.findByUuid(landlordId)).thenReturn(Optional.empty());
+        when(tenantRepository.findByUuid(tenantId)).thenReturn(Optional.empty());
+        when(propertyRepository.getById(propertyId)).thenReturn(new Property());
+        ApiResponse result = testService.submitLeaseApplications(request);
+        Assert.assertEquals(result.getClass(), ApiResponse.class);
+        Assert.assertNull(result.getData());
+        Assert.assertEquals(HttpStatus.NOT_FOUND, result.getStatus());
+        Assert.assertEquals(Boolean.FALSE, result.getSuccess());
+        Assert.assertEquals("User Not Found",result.getMessage());
+
+    }
 
     @TestConfiguration
     static class LeaseServiceImplTestContextConfiguration {

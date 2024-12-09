@@ -1,5 +1,9 @@
+//Author: Mamtha Patalay
+//ID:24182559
+
 package com.tenant.management.user.entities;
 
+import com.tenant.management.utils.AppConstants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +29,7 @@ public class User {
     private String password;
     private String phoneNumber;
     private String address;
-    private String occupation;
+    private AppConstants.OccupationCategories occupation;
     private boolean verified;
 }
 

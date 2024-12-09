@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+//Author : K S SRI KUMAR
+//Id : 24177474
 @Repository
 public interface LeaseRepository extends JpaRepository<LeaseApplication, UUID> {
 

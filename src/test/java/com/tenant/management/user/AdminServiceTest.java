@@ -1,3 +1,6 @@
+//Author: Mamtha Patalay
+//ID:24182559
+
 package com.tenant.management.user;
 
 
@@ -27,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class AdminServiceTest {
     UUID adminId = UUID.randomUUID();
     UUID issueId = UUID.randomUUID();
-    Admin appUser = Admin.builder().adminId(adminId).build();
+    Admin admin = Admin.builder().adminId(adminId).build();
     Issue issue = Issue.builder().issueStatus(AppConstants.IssueStatus.OPEN).build();
     @Mock
     private AdminRepository adminTestRepository;
@@ -39,7 +42,7 @@ public class AdminServiceTest {
 
     @Test
     void getAdminId_Success() {
-        when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(appUser));
+        when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(admin));
         ApiResponse result = adminService.getAdminById(adminId);
         Assert.assertNotNull(result.getData());
         Assert.assertEquals(ApiResponse.class, result.getClass());
@@ -92,7 +95,7 @@ public class AdminServiceTest {
                 .issueStatus(String.valueOf(AppConstants.IssueStatus.OPEN))
                 .issueDescription("issue description").adminId(adminId).build();
 
-        when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(appUser));
+        when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(admin));
         ApiResponse result = adminService.raiseIssue(issueDetails);
         Assert.assertNotNull(result);
         Assert.assertEquals(HttpStatus.OK, result.getStatus());
@@ -107,7 +110,7 @@ public class AdminServiceTest {
                 .issueDescription("issue description").adminId(adminId).issueId(issueId).build();
 
         when(issueTestRepository.findByUuid(issueId)).thenReturn(Optional.of(issue));
-        when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(appUser));
+        when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(admin));
 
         ApiResponse result = adminService.updateIssueStatus(issueDetails);
 
