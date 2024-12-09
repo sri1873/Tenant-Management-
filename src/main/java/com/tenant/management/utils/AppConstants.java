@@ -23,4 +23,12 @@ public class AppConstants {
         RESOLVED,
         CLOSED
     }
+
+    public enum OccupationCategories {
+        STUDENT,
+        RETIRED,
+        SKILLED_PROFESSIONAL,
+        UNSKILLED_PROFESSIONAL,
+        PART_TIME
+    }
 }

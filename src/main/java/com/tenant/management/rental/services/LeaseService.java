@@ -3,6 +3,7 @@ package com.tenant.management.rental.services;
 import com.tenant.management.property.entities.Property;
 import com.tenant.management.property.repositories.PropertyRepository;
 import com.tenant.management.rental.entities.LeaseApplication;
+import com.tenant.management.rental.implementation.strategy.*;
 import com.tenant.management.rental.repositories.LeaseRepository;
 import com.tenant.management.rental.requestdtos.SubmitApplicationRequest;
 import com.tenant.management.user.entities.Landlord;
@@ -15,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 
 //Author : K S SRI KUMAR
 //Id : 24177474
@@ -83,25 +86,51 @@ public class LeaseService {
     public ApiResponse submitLeaseApplications(SubmitApplicationRequest leaseApplication) {
         Optional<Landlord> optionalLandlord = landlordRepository.findByUuid(leaseApplication.getLandlordId());
         Optional<Tenant> optionalTenant = tenantRepository.findByUuid(leaseApplication.getTenantId());
-        Property byId = propertyRepository.getById(leaseApplication.getPropertyId());
-        if (byId.getId()==null){
+        Property property = propertyRepository.getById(leaseApplication.getPropertyId());
+        if (property.getId() == null) {
             return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("Property Not Found")
                     .success(Boolean.FALSE).build();
         }
-        if (optionalLandlord.isEmpty() || optionalTenant.isEmpty()){
+        if (optionalLandlord.isEmpty() || optionalTenant.isEmpty()) {
             return ApiResponse.builder().status(HttpStatus.NOT_FOUND).message("User Not Found")
                     .success(Boolean.FALSE).build();
 
         }
-
+        Tenant tenant = optionalTenant.get();
+        double discountPercent = calculateProposedRent(tenant.getOccupation(), tenant.getCreditScore());
         leaseRepository.save(LeaseApplication.builder()
-                .tenant(optionalTenant.get())
+                .tenant(tenant)
                 .landlord(optionalLandlord.get())
-                .property(byId)
+                .property(property)
+                .submittedDate(LocalDate.now())
+                .proposedRent(property.getPrice() - ((discountPercent / 100) * property.getPrice()))
                 .status(AppConstants.ApplicationStatus.PENDING).build());
         return ApiResponse.builder().status(HttpStatus.CREATED).message("Submitted Successfully")
                 .success(Boolean.TRUE).build();
 
+    }
+
+    private double calculateProposedRent(AppConstants.OccupationCategories occupationCategory, int creditScore) {
+        ScoreCalculatorContext context = new ScoreCalculatorContext();
+        switch (occupationCategory) {
+            case STUDENT:
+                context.setStrategy(new StudentScoreStrategy());
+                break;
+            case RETIRED:
+                context.setStrategy(new RetiredScoreStrategy());
+                break;
+            case SKILLED_PROFESSIONAL:
+                context.setStrategy(new SkilledProfessionalScoreStrategy());
+                break;
+            case UNSKILLED_PROFESSIONAL:
+                context.setStrategy(new UnskilledProfessionalScoreStrategy());
+                break;
+            case PART_TIME:
+                context.setStrategy(new PartTimeScoreStrategy());
+                break;
+        }
+
+        return context.calculateScore(creditScore);
     }
 
     public ApiResponse updateLeaseApplicationStatus(LeaseApplication leaseApplication) {

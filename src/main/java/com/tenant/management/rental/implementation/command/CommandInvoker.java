@@ -1,4 +1,4 @@
-package com.tenant.management.rental.implementation;
+package com.tenant.management.rental.implementation.command;
 
 import com.tenant.management.rental.entities.Command;
 import com.tenant.management.utils.ApiResponse;

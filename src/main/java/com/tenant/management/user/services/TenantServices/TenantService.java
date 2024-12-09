@@ -29,9 +29,11 @@ public class TenantService {
     public void attach(TenantObserver observer) {
         observers.add(observer);
     }
+
     public void detach(TenantObserver observer) {
         observers.remove(observer);
     }
+
     private void notify(Tenant tenant) {
         for (TenantObserver observer : observers) {
             observer.onTenantChange(tenant);
