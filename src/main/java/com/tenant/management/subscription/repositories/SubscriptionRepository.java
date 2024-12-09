@@ -11,7 +11,7 @@ public interface SubscriptionRepository extends JpaRepository<SubscriptionPlan, 
 
     // Find all subscription plans for a specific tenant
     @Query(value = "SELECT * FROM subscription sub WHERE sub.tenant_id = ?1", nativeQuery = true)
-    List<SubscriptionPlan> findByTenantId(UUID tenantId);
+    List<SubscriptionPlan> findByUserId(UUID tenantId);
 
     @Override
     List<SubscriptionPlan> findAll();

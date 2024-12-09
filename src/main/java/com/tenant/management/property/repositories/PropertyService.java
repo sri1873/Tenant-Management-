@@ -21,5 +21,5 @@ public interface PropertyService {
 
     List<PropertyResponse> getAllProperties();
 
-    List<PropertyResponse> searchProperties(String location, Double minPrice, Double maxPrice, String type, Integer bedrooms, Integer bathrooms, Boolean available);
+    List<PropertyResponse> searchProperties(String location,String propertyTitle ,Double minPrice, Double maxPrice, String type, Integer bedrooms, Integer bathrooms, Boolean available);
 }

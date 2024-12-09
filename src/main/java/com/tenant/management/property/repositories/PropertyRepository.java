@@ -13,6 +13,7 @@ public interface PropertyRepository extends JpaRepository<Property, UUID> {
 
     @Query("SELECT p FROM Property p WHERE " +
             "(:location IS NULL OR p.address LIKE %:location%) AND " +
+            "(:propertyTitle IS NULL OR p.propertyTitle LIKE %:propertyTitle%) AND " +  // Added propertyTitle filter
             "(:minPrice IS NULL OR p.price >= :minPrice) AND " +
             "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
             "(:type IS NULL OR p.type = :type) AND " +
@@ -21,6 +22,7 @@ public interface PropertyRepository extends JpaRepository<Property, UUID> {
             "(:available IS NULL OR p.available = :available)")
     List<Property> searchProperties(
             @Param("location") String location,
+            @Param("propertyTitle") String propertyTitle,
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice,
             @Param("type") String type,
