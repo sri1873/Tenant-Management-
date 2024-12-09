@@ -1,5 +1,6 @@
 package com.tenant.management.paymentGateway.controller;
-
+//Author : Kshitij Ghodekar
+//Id : 24149802
 import com.tenant.management.paymentGateway.requestDtos.PaymentRequest;
 import com.tenant.management.paymentGateway.requestDtos.PaymentResponse;
 import com.tenant.management.paymentGateway.services.PaymentService;
@@ -28,4 +29,18 @@ public class PaymentController {
         PaymentResponse response = paymentService.verifyPayment(paymentId);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/cancel/{paymentId}")
+    public ResponseEntity<PaymentResponse> cancelPayment(@PathVariable UUID paymentId) {
+        PaymentResponse response = paymentService.cancelPayment(paymentId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/success/{paymentId}")
+    public ResponseEntity<PaymentResponse> markPaymentAsSuccess(@PathVariable UUID paymentId) {
+        PaymentResponse response = paymentService.markPaymentAsSuccess(paymentId);
+        return ResponseEntity.ok(response);
+    }
+
+
 }

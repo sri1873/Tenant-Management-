@@ -1,5 +1,6 @@
 package com.tenant.management.paymentGateway.entities;
-
+//Author : Kshitij Ghodekar
+//Id : 24149802
 import com.tenant.management.property.entities.Property;
 import com.tenant.management.user.entities.Tenant;
 import jakarta.persistence.*;
