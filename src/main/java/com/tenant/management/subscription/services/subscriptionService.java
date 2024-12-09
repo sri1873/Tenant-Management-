@@ -2,12 +2,14 @@ package com.tenant.management.subscription.services;
 
 import com.tenant.management.subscription.entities.*;
 import com.tenant.management.user.entities.Tenant;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class subscriptionService {
     private Map<String, SubscriptionPlan> plans = new HashMap<>();
     private Map<String, TenantSubscription> tenantSubscriptions = new HashMap<>();

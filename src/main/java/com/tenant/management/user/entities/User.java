@@ -31,5 +31,16 @@ public class User {
     private String address;
     private AppConstants.OccupationCategories occupation;
     private boolean verified;
+    public String getName() {
+        return firstName + " " + lastName;
+    }
+    public void setName(String fullName) {
+        if (fullName == null || fullName.isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+        String[] nameParts = fullName.split(" ", 2);
+        this.firstName = nameParts[0];
+        this.lastName = nameParts.length > 1 ? nameParts[1] : "";
+    }
 }
 
