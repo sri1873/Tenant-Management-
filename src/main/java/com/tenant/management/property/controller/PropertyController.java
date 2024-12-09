@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+//Author : Kshitij Ghodekar
+//Id : 24149802
 @RestController
 @RequestMapping("/properties")
 @CrossOrigin(origins = "http://localhost:3000")

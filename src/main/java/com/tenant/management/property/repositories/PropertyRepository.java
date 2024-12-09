@@ -1,5 +1,6 @@
 package com.tenant.management.property.repositories;
-
+//Author : Kshitij Ghodekar
+//Id : 24149802
 import com.tenant.management.property.entities.Property;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

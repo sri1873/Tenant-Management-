@@ -1,5 +1,6 @@
 package com.tenant.management.property.entities;
-
+//Author : Kshitij Ghodekar
+//Id : 24149802
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

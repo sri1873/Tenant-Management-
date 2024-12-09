@@ -1,5 +1,6 @@
 package com.tenant.management.property.entities;
-
+//Author : Kshitij Ghodekar
+//Id : 24149802
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;

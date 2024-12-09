@@ -1,5 +1,6 @@
 package com.tenant.management.property.repositories;
-
+//Author : Kshitij Ghodekar
+//Id : 24149802
 import com.tenant.management.property.requestdtos.AddPropertyRequest;
 import com.tenant.management.property.requestdtos.PropertyResponse;
 import com.tenant.management.property.requestdtos.UpdatePropertyRequest;
