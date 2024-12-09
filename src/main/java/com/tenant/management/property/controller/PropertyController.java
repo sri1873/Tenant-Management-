@@ -69,13 +69,14 @@ public class PropertyController {
     @GetMapping("/search")
     public ResponseEntity<List<PropertyResponse>> searchProperties(
             @RequestParam(required = false) String location,
+            @RequestParam(required = false) String propertyTitle,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String type,
             @RequestParam(required = false) Integer bedrooms,
             @RequestParam(required = false) Integer bathrooms,
             @RequestParam(required = false) Boolean available) {
-        List<PropertyResponse> properties = propertyService.searchProperties(location, minPrice, maxPrice, type, bedrooms, bathrooms, available);
+        List<PropertyResponse> properties = propertyService.searchProperties(location,propertyTitle ,minPrice, maxPrice, type, bedrooms, bathrooms, available);
         return new ResponseEntity<>(properties, HttpStatus.OK);
     }
 }

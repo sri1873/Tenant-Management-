@@ -40,17 +40,16 @@ public class PropertyServiceImpl implements PropertyService {
             throw new IllegalArgumentException("Landlord ID cannot be null or empty.");
         }
 
-
-        Property property = PropertyFactory.createProperty(
+        Property property = PropertyFactory.createProperty( // Implemented Factory Design Pattern
                 addPropertyRequest.getType(),
                 addPropertyRequest.getAddress(),
+                addPropertyRequest.getPropertyTitle(),
                 addPropertyRequest.getPrice(),
                 addPropertyRequest.getBedrooms(),
                 addPropertyRequest.getBathrooms(),
                 addPropertyRequest.getAvailable(),
                 addPropertyRequest.getLandlordId()
         );
-
         // Save property to the repository
         propertyRepository.save(property);
 
@@ -105,9 +104,9 @@ public class PropertyServiceImpl implements PropertyService {
 
 
     @Override
-    public List<PropertyResponse> searchProperties(String location, Double minPrice, Double maxPrice, String type, Integer bedrooms, Integer bathrooms, Boolean available) {
-        List<Property> properties = propertyRepository.searchProperties(location, minPrice, maxPrice, type, bedrooms, bathrooms, available);
-        return properties.stream().map(this::mapToResponse).toList(); // Replaced collect with toList
+    public List<PropertyResponse> searchProperties(String location, String propertyTitle,Double minPrice, Double maxPrice, String type, Integer bedrooms, Integer bathrooms, Boolean available) {
+        List<Property> properties = propertyRepository.searchProperties(location, propertyTitle, minPrice, maxPrice, type, bedrooms, bathrooms, available);
+        return properties.stream().map(this::mapToResponse).toList();
     }
 
     // Helper method to map Property entity to PropertyResponse DTO
@@ -115,6 +114,7 @@ public class PropertyServiceImpl implements PropertyService {
         PropertyResponse response = new PropertyResponse();
         response.setPropertyId(property.getId());
         response.setAddress(property.getAddress());
+        response.setPropertyTitle(property.getPropertyTitle());
         response.setPrice(property.getPrice());
         response.setType(property.getType());
         response.setBedrooms(property.getBedrooms());

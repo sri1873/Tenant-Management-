@@ -1,19 +1,19 @@
 package com.tenant.management.paymentGateway.services;
-//Author : Kshitij Ghodekar
-//Id : 24149802
+
 import com.tenant.management.paymentGateway.entities.Payment;
 import com.tenant.management.paymentGateway.repositories.PaymentRepository;
 import com.tenant.management.paymentGateway.requestDtos.PaymentRequest;
 import com.tenant.management.paymentGateway.requestDtos.PaymentResponse;
 import com.tenant.management.property.entities.Property;
 import com.tenant.management.property.repositories.PropertyRepository;
+import com.tenant.management.subscription.entities.SubscriptionPlan;
+import com.tenant.management.subscription.repositories.SubscriptionRepository;
 import com.tenant.management.user.entities.Tenant;
 import com.tenant.management.user.repositories.TenantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,23 +31,31 @@ public class PaymentService {
     @Autowired
     private PropertyRepository propertyRepository;
 
+    @Autowired
+    private SubscriptionRepository subscriptionRepository;  // Added SubscriptionRepository
+
     public PaymentResponse initiatePayment(PaymentRequest request) {
-        Optional<Tenant> optionalTenant = tenantRepository.findByUuid(request.getTenantId());
+        Optional<Tenant> optionalTenant = tenantRepository.findByUuid(request.getUserId());
         Property property = propertyRepository.getById(request.getPropertyId());
+
+        // Ensure the tenant exists
+        Tenant tenant = optionalTenant.orElseThrow(() -> new IllegalArgumentException("Tenant not found"));
+        // Get the tenant's subscription plan
+        SubscriptionPlan subscriptionPlan = getTenantSubscription(tenant.getUserId());
+        // Calculate the final amount with discount based on subscription
+        double finalAmount = calculateFinalAmount(property, subscriptionPlan);
 
         // Create a new payment record
         Payment payment = new Payment();
         payment.setId(UUID.randomUUID());
-        payment.setTenantId(optionalTenant.get());
+        payment.setTenantId(tenant);
         payment.setPropertyId(property);
-        payment.setAmount(request.getAmount());
+        payment.setAmount(finalAmount);  // Use the final amount after discount and taxes
         payment.setStatus("PENDING");
         payment.setPaymentDate(new Date());
         payment.setPaymentMethod(request.getPaymentMethod());
 
-        paymentRepository.save(payment);
-
-        RestTemplate restTemplate = new RestTemplate();
+        // Simulate payment gateway response to be added later on
         String transactionId = UUID.randomUUID().toString(); // Mock transaction ID
         String gatewayResponse = "Mock response from gateway";
 
@@ -56,13 +64,55 @@ public class PaymentService {
         payment.setStatus("SUCCESS");
         paymentRepository.save(payment);
 
+        // Prepare the response
         PaymentResponse response = new PaymentResponse();
         response.setTransactionId(transactionId);
         response.setStatus("SUCCESS");
-        response.setAmount(request.getAmount());
+        response.setAmount(finalAmount);  // Set the final amount in the response
         response.setPaymentDate(payment.getPaymentDate());
 
         return response;
+    }
+
+    // Method to fetch the tenant's subscription plan
+    private SubscriptionPlan getTenantSubscription(UUID tenantId) {
+        List<SubscriptionPlan> subscriptionPlans = subscriptionRepository.findByUserId(tenantId);
+        if (subscriptionPlans.isEmpty()) {
+            throw new IllegalArgumentException("No subscription found for tenant ID: " + tenantId);
+        }
+        // Assuming the first subscription is the active one
+        return subscriptionPlans.get(0);
+    }
+
+    // Calculate the final amount considering the subscription discount and VAT
+    private double calculateFinalAmount(Property property, SubscriptionPlan subscriptionPlan) {
+        double basePrice = property.getPrice();
+        double discount = getDiscountForSubscription(subscriptionPlan);
+        double discountedPrice = basePrice - (basePrice * discount);
+        if (property.getType().equalsIgnoreCase("commercial")) {
+            double vatRate = 0.23; // 23% VAT for commercial properties in ireland
+            discountedPrice = discountedPrice + (discountedPrice * vatRate);
+        }
+        return discountedPrice;
+    }
+
+    // Get discount based on subscription plan
+    private double getDiscountForSubscription(SubscriptionPlan subscriptionPlan) {
+        if (subscriptionPlan == null) {
+            return 0;  // No discount if subscription plan is not there
+        }
+
+        String planName = subscriptionPlan.getName().toUpperCase();
+        switch (planName) {
+            case "NORMAL":
+                return 0.15; // 15% discount for Normal plan
+            case "PLUS":
+                return 0.20; // 20% discount for Plus plan
+            case "PREMIUM":
+                return 0.25; // 25% discount for Premium plan
+            default:
+                return 0; // No discount for unrecognized plans
+        }
     }
 
     public PaymentResponse verifyPayment(UUID paymentId) {
@@ -111,7 +161,7 @@ public class PaymentService {
             return response;
         }
 
-        throw new IllegalStateException("Only PENDING payments can be cancelled");
+        throw new IllegalArgumentException("Only PENDING payments can be cancelled");
     }
 
     public PaymentResponse markPaymentAsSuccess(UUID paymentId) {

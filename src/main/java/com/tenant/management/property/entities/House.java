@@ -11,8 +11,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 public class House extends Property {
-    public House(String address, double price, int bedrooms, int bathrooms, boolean available, UUID landlordId) {
+    public House(String propertyTitle,String address, double price, int bedrooms, int bathrooms, boolean available, UUID landlordId) {
         this.setType("House");
+        this.setPropertyTitle(propertyTitle);
         this.setAddress(address);
         this.setPrice(price);
         this.setBedrooms(bedrooms);

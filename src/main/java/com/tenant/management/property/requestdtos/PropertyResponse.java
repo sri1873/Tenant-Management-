@@ -9,6 +9,7 @@ import java.util.UUID;
 public class PropertyResponse {
     private UUID propertyId;
     private String address;
+    private String propertyTitle;
     private Double price;
     private String type;
     private Integer bedrooms;

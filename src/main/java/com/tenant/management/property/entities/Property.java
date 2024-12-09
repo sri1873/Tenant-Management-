@@ -16,6 +16,7 @@ public class Property {
     @GeneratedValue
     private UUID id = UUID.randomUUID();
     private String address;
+    private String propertyTitle;
     private Double price;
     @Column(nullable = false)
     private String type;

@@ -204,10 +204,10 @@ public class PropertyServiceTest {
 
     @Test
     void searchPropertiesTestForNotMatch() {
-        when(propertyRepository.searchProperties(any(), any(), any(), any(), any(), any(), any()))
+        when(propertyRepository.searchProperties(any(), any(), any(), any(), any(), any(), any(),any()))
                 .thenReturn(List.of());  // No properties match the search criteria
 
-        List<PropertyResponse> result = propertyService.searchProperties("Nonexistent Location", 1000.00, 2000.00, "Apartment", 2, 1, true);
+        List<PropertyResponse> result = propertyService.searchProperties("Nonexistent Location","Spacious House" ,1000.00, 2000.00, "Apartment", 2, 1, true);
 
         assertNotNull(result);
         assertTrue(result.isEmpty(), "The result should be empty when no properties match the criteria.");
@@ -215,10 +215,10 @@ public class PropertyServiceTest {
 
     @Test
     void searchPropertiesTestForMultipleFilters() {
-        when(propertyRepository.searchProperties("Main St", 1000.00, 3000.00, "Apartment", 2, 1, true))
+        when(propertyRepository.searchProperties("Main St","Spacious Appartment", 1000.00, 3000.00, "Apartment", 2, 1, true))
                 .thenReturn(List.of(mockProperty));  // Mocking the repository to return the mockProperty
 
-        List<PropertyResponse> result = propertyService.searchProperties("Main St", 1000.00, 3000.00, "Apartment", 2, 1, true);
+        List<PropertyResponse> result = propertyService.searchProperties("Main St", "Spacious House",1000.00, 3000.00, "Apartment", 2, 1, true);
 
         assertNotNull(result);
         assertEquals(1, result.size(), "The search should return exactly one property.");

@@ -14,6 +14,9 @@ public class AddPropertyRequest {
     @NotBlank(message = "Address is required")
     private String address;
 
+    @NotBlank(message = "Property Title is required")
+    private String propertyTitle;
+
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     private Double price;
