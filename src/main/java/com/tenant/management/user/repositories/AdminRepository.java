@@ -1,3 +1,6 @@
+//Author: Mamtha Patalay
+//ID:24182559
+
 package com.tenant.management.user.repositories;
 
 import com.tenant.management.user.entities.Admin;
@@ -12,9 +15,9 @@ import java.util.UUID;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, UUID> {
 
-    @Query(value = "SELECT * FROM admin where admin.adminId =?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM admin where admin.admin_id =?1", nativeQuery = true)
     Optional<Admin> findByUuid(UUID adminId);
 
-    @Query(value = "DELETE * FROM admin where admin.adminId=?1", nativeQuery = true)
-    void deleteById(@NotNull UUID adminId);
+    @Query(value = "DELETE * FROM admin where admin.admin_id=?1", nativeQuery = true)
+    void deleteById(@NotNull UUID admin_id);
 }
