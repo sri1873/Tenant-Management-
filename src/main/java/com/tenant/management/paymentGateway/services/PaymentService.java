@@ -84,17 +84,24 @@ public class PaymentService {
         return subscriptionPlans.get(0);
     }
 
-    // Calculate the final amount considering the subscription discount and VAT
+    // Calculate the final amount considering the subscription discount and VAT for rental properties
     private double calculateFinalAmount(Property property, SubscriptionPlan subscriptionPlan) {
         double basePrice = property.getPrice();
         double discount = getDiscountForSubscription(subscriptionPlan);
         double discountedPrice = basePrice - (basePrice * discount);
-        if (property.getType().equalsIgnoreCase("commercial")) {
-            double vatRate = 0.23; // 23% VAT for commercial properties in ireland
+
+        // Apply VAT for rental properties
+        if (property.getType().equalsIgnoreCase("house") ||
+                property.getType().equalsIgnoreCase("apartment") ||
+                property.getType().equalsIgnoreCase("condo")) {
+
+            double vatRate = 0.20; // 20% VAT for rental properties (house, apartment, condo)
+            //20% Tax is when income up to €38,000  or else 40% on income above €38,000.
             discountedPrice = discountedPrice + (discountedPrice * vatRate);
         }
         return discountedPrice;
     }
+
 
     // Get discount based on subscription plan
     private double getDiscountForSubscription(SubscriptionPlan subscriptionPlan) {
