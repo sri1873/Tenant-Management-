@@ -4,6 +4,10 @@ import com.tenant.management.paymentGateway.entities.Payment;
 import com.tenant.management.paymentGateway.repositories.PaymentRepository;
 import com.tenant.management.paymentGateway.requestDtos.PaymentRequest;
 import com.tenant.management.paymentGateway.requestDtos.PaymentResponse;
+import com.tenant.management.paymentGateway.strategy.NormalPaymentCalculationStrategy;
+import com.tenant.management.paymentGateway.strategy.PaymentCalculationStrategy;
+import com.tenant.management.paymentGateway.strategy.PlusPaymentCalculationStrategy;
+import com.tenant.management.paymentGateway.strategy.PremiumPaymentCalculationStrategy;
 import com.tenant.management.property.entities.Property;
 import com.tenant.management.property.repositories.PropertyRepository;
 import com.tenant.management.subscription.entities.SubscriptionPlan;
@@ -34,29 +38,48 @@ public class PaymentService {
     @Autowired
     private SubscriptionRepository subscriptionRepository;  // Added SubscriptionRepository
 
+    private PaymentCalculationStrategy paymentCalculationStrategy;
+
+    private void setPaymentCalculationStrategy(SubscriptionPlan subscriptionPlan) {
+        String planName = subscriptionPlan.getName().toUpperCase();
+        switch (planName) {
+            case "NORMAL":
+                paymentCalculationStrategy = new NormalPaymentCalculationStrategy();
+                break;
+            case "PLUS":
+                paymentCalculationStrategy = new PlusPaymentCalculationStrategy();
+                break;
+            case "PREMIUM":
+                paymentCalculationStrategy = new PremiumPaymentCalculationStrategy();
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported subscription plan: " + planName);
+        }
+    }
+
     public PaymentResponse initiatePayment(PaymentRequest request) {
         Optional<Tenant> optionalTenant = tenantRepository.findByUuid(request.getUserId());
         Property property = propertyRepository.getById(request.getPropertyId());
 
-        // Ensure the tenant exists
         Tenant tenant = optionalTenant.orElseThrow(() -> new IllegalArgumentException("Tenant not found"));
-        // Get the tenant's subscription plan
         SubscriptionPlan subscriptionPlan = getTenantSubscription(tenant.getUserId());
-        // Calculate the final amount with discount based on subscription
-        double finalAmount = calculateFinalAmount(property, subscriptionPlan);
+        // Set strategy based on subscription plan
+        setPaymentCalculationStrategy(subscriptionPlan);
+        // Calculate the final amount
+        double finalAmount = paymentCalculationStrategy.calculateFinalAmount(property, subscriptionPlan);
 
-        // Create a new payment record
+        // Create and process the payment
         Payment payment = new Payment();
         payment.setId(UUID.randomUUID());
         payment.setTenantId(tenant);
         payment.setPropertyId(property);
-        payment.setAmount(finalAmount);  // Use the final amount after discount and taxes
+        payment.setAmount(finalAmount);
         payment.setStatus("PENDING");
         payment.setPaymentDate(new Date());
         payment.setPaymentMethod(request.getPaymentMethod());
 
-        // Simulate payment gateway response to be added later on
-        String transactionId = UUID.randomUUID().toString(); // Mock transaction ID
+        // Simulate payment gateway response
+        String transactionId = UUID.randomUUID().toString();
         String gatewayResponse = "Mock response from gateway";
 
         payment.setTransactionId(transactionId);
@@ -68,7 +91,7 @@ public class PaymentService {
         PaymentResponse response = new PaymentResponse();
         response.setTransactionId(transactionId);
         response.setStatus("SUCCESS");
-        response.setAmount(finalAmount);  // Set the final amount in the response
+        response.setAmount(finalAmount);
         response.setPaymentDate(payment.getPaymentDate());
 
         return response;
@@ -82,44 +105,6 @@ public class PaymentService {
         }
         // Assuming the first subscription is the active one
         return subscriptionPlans.get(0);
-    }
-
-    // Calculate the final amount considering the subscription discount and VAT for rental properties
-    private double calculateFinalAmount(Property property, SubscriptionPlan subscriptionPlan) {
-        double basePrice = property.getPrice();
-        double discount = getDiscountForSubscription(subscriptionPlan);
-        double discountedPrice = basePrice - (basePrice * discount);
-
-        // Apply VAT for rental properties
-        if (property.getType().equalsIgnoreCase("house") ||
-                property.getType().equalsIgnoreCase("apartment") ||
-                property.getType().equalsIgnoreCase("condo")) {
-
-            double vatRate = 0.20; // 20% VAT for rental properties (house, apartment, condo)
-            //20% Tax is when income up to €38,000  or else 40% on income above €38,000.
-            discountedPrice = discountedPrice + (discountedPrice * vatRate);
-        }
-        return discountedPrice;
-    }
-
-
-    // Get discount based on subscription plan
-    private double getDiscountForSubscription(SubscriptionPlan subscriptionPlan) {
-        if (subscriptionPlan == null) {
-            return 0;  // No discount if subscription plan is not there
-        }
-
-        String planName = subscriptionPlan.getName().toUpperCase();
-        switch (planName) {
-            case "NORMAL":
-                return 0.15; // 15% discount for Normal plan
-            case "PLUS":
-                return 0.20; // 20% discount for Plus plan
-            case "PREMIUM":
-                return 0.25; // 25% discount for Premium plan
-            default:
-                return 0; // No discount for unrecognized plans
-        }
     }
 
     public PaymentResponse verifyPayment(UUID paymentId) {
@@ -178,7 +163,7 @@ public class PaymentService {
         // Only update status to SUCCESS if it's still PENDING
         if (!"CANCELLED".equals(payment.getStatus()) && !"SUCCESS".equals(payment.getStatus())) {
             payment.setStatus("SUCCESS");
-            payment.setPaymentDate(new Date()); // Optional: Update the payment date to the current date
+            payment.setPaymentDate(new Date()); // Update the payment date to the current date
             paymentRepository.save(payment);
 
             PaymentResponse response = new PaymentResponse();
