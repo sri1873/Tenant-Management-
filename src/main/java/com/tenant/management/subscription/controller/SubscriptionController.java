@@ -1,7 +1,7 @@
 package com.tenant.management.subscription.controller;
 
 import com.tenant.management.subscription.entities.TenantSubscription;
-import com.tenant.management.subscription.services.subscriptionService;
+import com.tenant.management.subscription.services.SubscriptionService;
 import com.tenant.management.user.entities.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SubscriptionController {
 
     @Autowired
-    private subscriptionService subscriptionService;
+    private SubscriptionService subscriptionService;
 
     // Simulated tenant database (replace with actual database in real application)
     private final Map<UUID, Tenant> tenantDatabase = new ConcurrentHashMap<>();

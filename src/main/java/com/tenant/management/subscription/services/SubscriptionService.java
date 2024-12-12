@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class subscriptionService {
+public class SubscriptionService {
     private Map<String, SubscriptionPlan> plans = new HashMap<>();
     private Map<String, TenantSubscription> tenantSubscriptions = new HashMap<>();
 
-    public subscriptionService() {
+    public SubscriptionService() {
         initializeDefaultPlans();
     }
 

@@ -2,7 +2,7 @@ package com.tenant.management.subscription;
 
 import com.tenant.management.subscription.entities.SubscriptionPlan;
 import com.tenant.management.subscription.entities.TenantSubscription;
-import com.tenant.management.subscription.services.subscriptionService;
+import com.tenant.management.subscription.services.SubscriptionService;
 import com.tenant.management.user.entities.Tenant;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class SubscriptionServiceTest {
 
-    private subscriptionService subscriptionService;
+    private SubscriptionService subscriptionService;
     private Tenant mockTenant;
     private Tenant anotherTenant;
 
     @BeforeEach
     void setUp() {
-        subscriptionService = new subscriptionService();
+        subscriptionService = new SubscriptionService();
 
         // First tenant
         mockTenant = new Tenant();

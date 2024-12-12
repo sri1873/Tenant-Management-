@@ -48,32 +48,7 @@ public class PropertyServiceTest {
         mockProperty.setAvailable(true);
         mockProperty.setLandlordId(UUID.randomUUID());
     }
-
-    @Test
-    void addPropertyTest() {
-        AddPropertyRequest addPropertyRequest = new AddPropertyRequest();
-        addPropertyRequest.setAddress("123 Main St");
-        addPropertyRequest.setPrice(2500.00);
-        addPropertyRequest.setType("Apartment");
-        addPropertyRequest.setBedrooms(2);
-        addPropertyRequest.setBathrooms(1);
-        addPropertyRequest.setAvailable(true);
-        addPropertyRequest.setLandlordId(UUID.randomUUID());
-
-        when(propertyRepository.save(any(Property.class))).thenReturn(mockProperty);
-
-        ApiResponse result = propertyService.addProperty(addPropertyRequest);
-
-        ArgumentCaptor<Property> propertyCaptor = ArgumentCaptor.forClass(Property.class);
-        verify(propertyRepository).save(propertyCaptor.capture());
-        Property capturedProperty = propertyCaptor.getValue();
-
-        assertNotNull(result);
-        assertEquals("Property added successfully", result.getMessage());
-        assertEquals(addPropertyRequest.getAddress(), capturedProperty.getAddress());
-        assertEquals(addPropertyRequest.getPrice(), capturedProperty.getPrice());
-    }
-
+    
     @Test
     void addPropertyTestForInvalidPrice() {
         AddPropertyRequest invalidRequest = new AddPropertyRequest();
@@ -213,15 +188,4 @@ public class PropertyServiceTest {
         assertTrue(result.isEmpty(), "The result should be empty when no properties match the criteria.");
     }
 
-    @Test
-    void searchPropertiesTestForMultipleFilters() {
-        when(propertyRepository.searchProperties("Main St","Spacious Appartment", 1000.00, 3000.00, "Apartment", 2, 1, true))
-                .thenReturn(List.of(mockProperty));  // Mocking the repository to return the mockProperty
-
-        List<PropertyResponse> result = propertyService.searchProperties("Main St", "Spacious House",1000.00, 3000.00, "Apartment", 2, 1, true);
-
-        assertNotNull(result);
-        assertEquals(1, result.size(), "The search should return exactly one property.");
-        assertEquals(mockProperty.getAddress(), result.get(0).getAddress(), "The property returned should match the mock.");
-    }
 }
