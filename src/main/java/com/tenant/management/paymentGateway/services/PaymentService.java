@@ -24,7 +24,7 @@ import java.util.UUID;
 @Service
 public class PaymentService {
 
-    private final String paymentGatewayUrl = "https://api.paymentgateway.com"; // Will in future when integrate
+    private final String paymentGatewayUrl = "https://api.paymentgateway.com"; // Will use in future when payment is integrated
 
     @Autowired
     private PaymentRepository paymentRepository;
