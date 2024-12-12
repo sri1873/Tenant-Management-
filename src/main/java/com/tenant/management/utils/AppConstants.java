@@ -1,7 +1,8 @@
 package com.tenant.management.utils;
 
-//Author : K S SRI KUMAR
+//Authors : K S SRI KUMAR
 //Id : 24177474
+
 public class AppConstants {
 
     public enum ApplicationStatus {

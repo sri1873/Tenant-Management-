@@ -3,6 +3,7 @@
 
 package com.tenant.management.user.services.LandlordServices;
 
+import com.tenant.management.user.Observer.AdminObserver;
 import com.tenant.management.user.entities.Landlord;
 import com.tenant.management.user.repositories.LandlordRepository;
 import com.tenant.management.user.requestdtos.AddUserDetails;
@@ -20,7 +21,6 @@ import java.util.UUID;
 public class LandlordService {
 
     private final LandlordRepository landlordRepository;
-    private final List<LandlordObserver> observers;
 
 
     @Autowired
@@ -29,16 +29,21 @@ public class LandlordService {
         this.observers = new ArrayList<>(); // Initialize the observers list
     }
 
-    public void attach(LandlordObserver observer) {
+
+    //    Observer Pattern implementation
+    private final List<AdminObserver> observers;
+
+
+    public void attach(AdminObserver observer) {
         observers.add(observer);
     }
 
-    public void detach(LandlordObserver observer) {
+    public void detach(AdminObserver observer) {
         observers.remove(observer);
     }
 
     private void notify(Landlord landlord) {
-        for (LandlordObserver observer : observers) {
+        for (AdminObserver observer : observers) {
             observer.onLandlordChange(landlord);
         }
     }

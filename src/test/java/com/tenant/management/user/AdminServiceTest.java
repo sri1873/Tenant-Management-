@@ -92,7 +92,7 @@ public class AdminServiceTest {
     @Test
     void raiseIssue_Success() {
         AddIssueDetails issueDetails = AddIssueDetails.builder().userType("Tenant")
-                .issueStatus(String.valueOf(AppConstants.IssueStatus.OPEN))
+                .issueStatus(AppConstants.IssueStatus.OPEN)
                 .issueDescription("issue description").adminId(adminId).build();
 
         when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(admin));
@@ -106,8 +106,8 @@ public class AdminServiceTest {
     @Test
     void updateIssueStatus_Success() {
         AddIssueDetails issueDetails = AddIssueDetails.builder().userType("Tenant")
-                .issueStatus(String.valueOf(AppConstants.IssueStatus.CLOSED))
-                .issueDescription("issue description").adminId(adminId).issueId(issueId).build();
+                .issueStatus(AppConstants.IssueStatus.CLOSED)
+                .issueDescription("issue description").adminId(adminId).build();
 
         when(issueTestRepository.findByUuid(issueId)).thenReturn(Optional.of(issue));
         when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(admin));

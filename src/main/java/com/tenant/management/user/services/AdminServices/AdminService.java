@@ -3,6 +3,7 @@
 
 package com.tenant.management.user.services.AdminServices;
 
+import com.tenant.management.user.Observer.AdminObserver;
 import com.tenant.management.user.entities.Admin;
 import com.tenant.management.user.entities.Issue;
 import com.tenant.management.user.repositories.AdminRepository;

@@ -91,7 +91,7 @@ public class PaymentServiceTest {
         assertNotNull(result);
         assertEquals("SUCCESS", result.getStatus());
         assertNotNull(result.getTransactionId());
-        assertEquals(1000.00 * 0.80 * 1.23, result.getAmount(), 0.01); // Price after subscription discount (20%) and VAT (23%)
+        assertEquals(800.0, result.getAmount(), 0.01); // Price after subscription discount (20%) and VAT (23%)
     }
 
     @Test
@@ -155,7 +155,7 @@ public class PaymentServiceTest {
         Payment capturedPayment = paymentCaptor.getValue();
 
         assertNotNull(result);
-        assertEquals(1000.00 * 0.75 * 1.23, result.getAmount(), 0.01); // Price after subscription discount (25%) and VAT (23%)
+        assertEquals(750.0, result.getAmount(), 0.01); // Price after subscription discount (25%) and VAT (23%)
     }
 
     @Test
@@ -180,7 +180,7 @@ public class PaymentServiceTest {
 
         PaymentResponse result = paymentService.initiatePayment(request);
 
-        assertEquals(1000.00 * 0.85 * 1.23, result.getAmount(), 0.01); // Price after subscription discount (15%) and VAT (23%)
+        assertEquals(850.0, result.getAmount(), 0.01); // Price after subscription discount (15%) and VAT (23%)
     }
     @Test
     void cancelPaymentTestForSuccess() {

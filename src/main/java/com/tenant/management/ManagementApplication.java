@@ -1,8 +1,8 @@
 package com.tenant.management;
 
+import com.tenant.management.property.services.PropertyServiceImpl;
 import com.tenant.management.user.services.AdminServices.AdminLogger;
 import com.tenant.management.user.services.AdminServices.AdminService;
-import com.tenant.management.user.services.LandlordServices.LandlordLogger;
 import com.tenant.management.user.services.LandlordServices.LandlordService;
 import com.tenant.management.user.services.TenantServices.TenantLogger;
 import com.tenant.management.user.services.TenantServices.TenantService;
@@ -12,21 +12,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ManagementApplication {
-
+    private final PropertyServiceImpl propertyService;
     private final TenantService tenantService;
     private final TenantLogger tenantLogger;
     private final LandlordService landlordService;
-    private final LandlordLogger landlordLogger;
     private final AdminService adminService;
     private final AdminLogger adminLogger;
 
     @Autowired
-    public ManagementApplication(TenantService tenantService, TenantLogger tenantLogger,
-                                 LandlordService landlordService, LandlordLogger landlordLogger, AdminService adminService, AdminLogger adminLogger) {
+    public ManagementApplication(TenantService tenantService, TenantLogger tenantLogger,PropertyServiceImpl propertyService,
+                                 LandlordService landlordService, AdminService adminService, AdminLogger adminLogger) {
         this.tenantService = tenantService;
+        this.propertyService= propertyService;
         this.tenantLogger = tenantLogger;
         this.landlordService = landlordService;
-        this.landlordLogger = landlordLogger;
         this.adminService = adminService;
         this.adminLogger = adminLogger;
     }
@@ -37,8 +36,9 @@ public class ManagementApplication {
 
     @Autowired
     public void initializeObservers() {
-        tenantService.attach(tenantLogger);
-        landlordService.attach(landlordLogger);
+        propertyService.attach(tenantLogger);
+        tenantService.attach(adminLogger);
+        landlordService.attach(adminLogger);
         adminService.attach(adminLogger);
     }
 }

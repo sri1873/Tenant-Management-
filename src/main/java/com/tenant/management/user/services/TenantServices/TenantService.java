@@ -3,6 +3,8 @@
 
 package com.tenant.management.user.services.TenantServices;
 
+import com.tenant.management.user.Observer.AdminObserver;
+import com.tenant.management.user.Observer.TenantObserver;
 import com.tenant.management.user.entities.Tenant;
 import com.tenant.management.user.repositories.TenantRepository;
 import com.tenant.management.user.requestdtos.AddUserDetails;
@@ -20,7 +22,7 @@ import java.util.UUID;
 public class TenantService {
 
     //    Observer Pattern implementation
-    private final List<TenantObserver> observers;
+    private final List<AdminObserver> observers;
 
     @Autowired
     private TenantRepository tenantRepository;
@@ -29,16 +31,16 @@ public class TenantService {
         this.observers = new ArrayList<>();
     }
 
-    public void attach(TenantObserver observer) {
+    public void attach(AdminObserver observer) {
         observers.add(observer);
     }
 
-    public void detach(TenantObserver observer) {
+    public void detach(AdminObserver observer) {
         observers.remove(observer);
     }
 
     private void notify(Tenant tenant) {
-        for (TenantObserver observer : observers) {
+        for (AdminObserver observer : observers) {
             observer.onTenantChange(tenant);
         }
     }

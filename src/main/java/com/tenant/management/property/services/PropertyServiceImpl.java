@@ -8,9 +8,16 @@ import com.tenant.management.property.repositories.PropertyService;
 import com.tenant.management.property.requestdtos.AddPropertyRequest;
 import com.tenant.management.property.requestdtos.PropertyResponse;
 import com.tenant.management.property.requestdtos.UpdatePropertyRequest;
+
+import com.tenant.management.user.Observer.TenantObserver;
+import com.tenant.management.user.entities.Tenant;
+import com.tenant.management.user.repositories.TenantRepository;
+import com.tenant.management.user.services.TenantServices.TenantService;
 import com.tenant.management.utils.ApiResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,6 +32,24 @@ public class PropertyServiceImpl implements PropertyService {
     // Constructor
     public PropertyServiceImpl(PropertyRepository propertyRepository) {
         this.propertyRepository = propertyRepository;
+        this.observers = new ArrayList<>();
+    }
+
+
+    //    Observer Pattern implementation
+    private final List<TenantObserver> observers;
+
+    public void attach(TenantObserver observer) {
+        observers.add(observer);
+    }
+    public void detach(TenantObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notify(Property property) {
+        for (TenantObserver observer : observers) {
+            observer.onPropertyChange(property);
+        }
     }
 
     @Override
@@ -52,6 +77,7 @@ public class PropertyServiceImpl implements PropertyService {
         );
         // Save property to the repository
         propertyRepository.save(property);
+        notify(property);
 
         return ApiResponse.builder()
                 .success(true)
