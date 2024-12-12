@@ -3,6 +3,7 @@
 
 package com.tenant.management.user.requestdtos;
 
+import com.tenant.management.utils.AppConstants;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,8 +13,7 @@ import java.util.UUID;
 @Data
 public class AddIssueDetails {
     private UUID adminId;
-    private UUID issueId;
     private String userType;
-    private String issueStatus;
+    private AppConstants.IssueStatus issueStatus;
     private String issueDescription;
 }

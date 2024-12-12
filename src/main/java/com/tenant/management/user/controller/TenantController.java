@@ -24,7 +24,7 @@ public class TenantController {
     }
 
     @GetMapping("/getTenantById/{userId}")
-    public ResponseEntity<ApiResponse> getTenantById(@RequestBody UUID userId) {
+    public ResponseEntity<ApiResponse> getTenantById(@PathVariable UUID userId) {
         ApiResponse tenant = tenantService.getTenantById(userId);
         return new ResponseEntity<>(tenant, HttpStatus.OK);
     }
@@ -41,8 +41,8 @@ public class TenantController {
         return new ResponseEntity<>(updatedTenant, HttpStatus.OK);
     }
 
-    @DeleteMapping("/tenant/{id}")
-    public ResponseEntity<ApiResponse> deleteTenant(@RequestBody UUID userId) {
+    @DeleteMapping("/tenant/{userId}")
+    public ResponseEntity<ApiResponse> deleteTenant(@PathVariable UUID userId) {
 
         return new ResponseEntity<>(tenantService.deleteTenant(userId), HttpStatus.NO_CONTENT);
     }

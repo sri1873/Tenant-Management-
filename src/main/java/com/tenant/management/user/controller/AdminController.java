@@ -18,12 +18,13 @@ import java.util.UUID;
 
 @RestController
 public class AdminController {
+
     private final AdminService adminService;
     private RtbService rtbService;
 
-    @Autowired
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, RtbService rtbService) {
         this.adminService = adminService;
+        this.rtbService = rtbService;
     }
 
     @PostMapping("/updateRtbStatus")
@@ -32,7 +33,7 @@ public class AdminController {
     }
 
     @GetMapping("/getAdminById/{adminId}")
-    public ResponseEntity<ApiResponse> getAdminById(@RequestBody UUID adminId) {
+    public ResponseEntity<ApiResponse> getAdminById(@PathVariable UUID adminId) {
         ApiResponse admin = adminService.getAdminById(adminId);
         return new ResponseEntity<>(admin, HttpStatus.OK);
     }
@@ -44,14 +45,14 @@ public class AdminController {
     }
 
     @GetMapping("/getIssueById/{issueId}")
-    public ResponseEntity<ApiResponse> getIssueById(@RequestBody UUID issueId) {
+    public ResponseEntity<ApiResponse> getIssueById(@PathVariable UUID issueId) {
         ApiResponse issue = adminService.getIssueById(issueId);
         return new ResponseEntity<>(issue, HttpStatus.OK);
     }
 
     @PutMapping("/issue/{issueId}")
-    public ResponseEntity<ApiResponse> updateIssueStatus(@RequestBody AddIssueDetails issueDetails) {
-        ApiResponse updatedStatus = adminService.updateIssueStatus(issueDetails);
+    public ResponseEntity<ApiResponse> updateIssueStatus(@PathVariable UUID issueId,@RequestBody AddIssueDetails issueDetails) {
+        ApiResponse updatedStatus = adminService.updateIssueStatus(issueId,issueDetails);
         return new ResponseEntity<>(updatedStatus, HttpStatus.OK);
     }
 

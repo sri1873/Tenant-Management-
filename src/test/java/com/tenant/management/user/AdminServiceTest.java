@@ -112,7 +112,7 @@ public class AdminServiceTest {
         when(issueTestRepository.findByUuid(issueId)).thenReturn(Optional.of(issue));
         when(adminTestRepository.findByUuid(adminId)).thenReturn(Optional.of(admin));
 
-        ApiResponse result = adminService.updateIssueStatus(issueDetails);
+        ApiResponse result = adminService.updateIssueStatus(issueId, issueDetails);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(HttpStatus.OK, result.getStatus());

@@ -41,9 +41,9 @@ public class PropertyServiceImpl implements PropertyService {
         }
 
         Property property = PropertyFactory.createProperty( // Implemented Factory Design Pattern
+                addPropertyRequest.getPropertyTitle(),
                 addPropertyRequest.getType(),
                 addPropertyRequest.getAddress(),
-                addPropertyRequest.getPropertyTitle(),
                 addPropertyRequest.getPrice(),
                 addPropertyRequest.getBedrooms(),
                 addPropertyRequest.getBathrooms(),

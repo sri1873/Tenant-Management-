@@ -5,8 +5,10 @@ package com.tenant.management.user.entities;
 
 import com.tenant.management.property.entities.Property;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -15,8 +17,11 @@ import java.util.UUID;
 @Table(name = "rtb")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RTB {
     @Id
+    @Builder.Default
     private UUID rtbId = UUID.randomUUID();
 
     @ManyToOne

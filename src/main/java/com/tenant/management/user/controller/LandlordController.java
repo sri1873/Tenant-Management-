@@ -25,7 +25,7 @@ public class LandlordController {
     }
 
     @GetMapping("/getLandlordById/{userId}")
-    public ResponseEntity<ApiResponse> getLandlordById(@RequestBody UUID userId) {
+    public ResponseEntity<ApiResponse> getLandlordById(@PathVariable UUID userId) {
         ApiResponse landlord = landlordService.getLandlordById(userId);
         return new ResponseEntity<>(landlord, HttpStatus.OK);
     }
@@ -37,13 +37,13 @@ public class LandlordController {
     }
 
     @PutMapping("/landlord/{userId}")
-    public ResponseEntity<ApiResponse> updateLandlord(@RequestBody UUID userId, AddUserDetails addUserDetails) {
+    public ResponseEntity<ApiResponse> updateLandlord(@PathVariable UUID userId, @RequestBody AddUserDetails addUserDetails) {
         ApiResponse updatedLandlord = landlordService.updateLandlord(userId, addUserDetails);
         return new ResponseEntity<>(updatedLandlord, HttpStatus.OK);
     }
 
-    @DeleteMapping("/landlord/{id}")
-    public ResponseEntity<ApiResponse> deleteLandlord(@RequestBody UUID userId) {
+    @DeleteMapping("/landlord/{userId}")
+    public ResponseEntity<ApiResponse> deleteLandlord(@PathVariable UUID userId) {
         ApiResponse response = landlordService.deleteLandlord(userId);
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }

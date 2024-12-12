@@ -93,12 +93,12 @@ public class AdminService {
                 .success(Boolean.TRUE).build();
     }
 
-    public ApiResponse updateIssueStatus(AddIssueDetails issueDetails) {
-        Optional<Issue> byUuid = issueRepository.findByUuid(issueDetails.getIssueId());
+    public ApiResponse updateIssueStatus(UUID issueId, AddIssueDetails issueDetails) {
+        Optional<Issue> byUuid = issueRepository.findByUuid(issueId);
         Optional<Admin> optionalAdmin = adminRepository.findByUuid(issueDetails.getAdminId());
         if (byUuid.isPresent()) {
             Issue issue = byUuid.get();
-            issue.setIssueStatus(AppConstants.IssueStatus.valueOf(issueDetails.getIssueStatus()));
+            issue.setIssueStatus(issueDetails.getIssueStatus());
             issueRepository.save(issue);
             notify(optionalAdmin.get());
             return ApiResponse.builder().status(HttpStatus.OK).message("Issue Status Updated")
